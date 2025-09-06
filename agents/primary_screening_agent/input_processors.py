@@ -16,7 +16,7 @@ import librosa
 import cv2
 import numpy as np
 from PIL import Image
-import pypdf2
+import pypdf
 from docx import Document
 from pydantic import BaseModel, Field
 
@@ -441,7 +441,7 @@ class DocumentProcessor:
     async def _extract_pdf_content(self, pdf_data: bytes) -> str:
         """Extract text content from PDF"""
         try:
-            pdf_reader = pypdf2.PdfReader(io.BytesIO(pdf_data))
+            pdf_reader = pypdf.PdfReader(io.BytesIO(pdf_data))
             text = ""
             for page in pdf_reader.pages:
                 text += page.extract_text() + "\n"

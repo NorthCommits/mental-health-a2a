@@ -75,14 +75,25 @@ class CrisisDetectionAgent:
             CrisisLevel.EMERGENCY: 0.9
         }
         
-        # Register message handlers
-        asyncio.create_task(self._register_message_handlers())
+        # Register message handlers and capabilities
+        # Note: These will be called when the agent is started
+        self._message_handlers_registered = False
+        self._capabilities_registered = False
+        self._monitoring_started = False
+    
+    async def initialize(self):
+        """Initialize the agent by registering handlers and capabilities"""
+        if not self._message_handlers_registered:
+            await self._register_message_handlers()
+            self._message_handlers_registered = True
         
-        # Register agent capabilities
-        asyncio.create_task(self._register_agent_capabilities())
+        if not self._capabilities_registered:
+            await self._register_agent_capabilities()
+            self._capabilities_registered = True
         
-        # Start monitoring loop
-        asyncio.create_task(self._monitoring_loop())
+        if not self._monitoring_started:
+            asyncio.create_task(self._monitoring_loop())
+            self._monitoring_started = True
     
     async def _register_message_handlers(self):
         """Register message handlers for A2A communication"""

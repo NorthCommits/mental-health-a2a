@@ -67,11 +67,20 @@ class PrimaryScreeningAgent:
         self.current_assessments: Dict[str, Dict[str, Any]] = {}
         self.active_sessions: Dict[str, Dict[str, Any]] = {}
         
-        # Register message handlers
-        asyncio.create_task(self._register_message_handlers())
+        # Register message handlers and capabilities
+        # Note: These will be called when the agent is started
+        self._message_handlers_registered = False
+        self._capabilities_registered = False
+    
+    async def initialize(self):
+        """Initialize the agent by registering handlers and capabilities"""
+        if not self._message_handlers_registered:
+            await self._register_message_handlers()
+            self._message_handlers_registered = True
         
-        # Register agent capabilities
-        asyncio.create_task(self._register_agent_capabilities())
+        if not self._capabilities_registered:
+            await self._register_agent_capabilities()
+            self._capabilities_registered = True
     
     async def _register_message_handlers(self):
         """Register message handlers for A2A communication"""

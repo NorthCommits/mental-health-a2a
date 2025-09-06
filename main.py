@@ -5,6 +5,14 @@ FastAPI application that orchestrates the mental health agent ecosystem
 using the Agent-to-Agent (A2A) protocol.
 """
 
+import sys
+import os
+from pathlib import Path
+
+# Add the current directory to Python path
+current_dir = Path(__file__).parent
+sys.path.insert(0, str(current_dir))
+
 import asyncio
 import uuid
 from datetime import datetime
@@ -448,6 +456,10 @@ async def analyze_interaction_for_crisis(
 async def startup_event():
     """Initialize the system on startup"""
     try:
+        # Initialize agents
+        await primary_screening_agent.initialize()
+        await crisis_detection_agent.initialize()
+        
         # Register agents with discovery service
         for agent_id, agent in agent_registry.items():
             await agent_discovery.register_agent(

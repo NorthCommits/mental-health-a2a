@@ -3,6 +3,13 @@ Mental Health A2A Agent Ecosystem - Streamlit Interface
 A streamlined mental health support system with file-based storage and professional UI
 """
 
+import sys
+from pathlib import Path
+
+# Add the current directory to Python path
+current_dir = Path(__file__).parent
+sys.path.insert(0, str(current_dir))
+
 import streamlit as st
 import json
 import os
@@ -12,14 +19,13 @@ from typing import Dict, List, Optional, Any
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from pathlib import Path
 import asyncio
 import threading
 import time
 
 # Import our A2A agents
-from agents.primary_screening_agent import PrimaryScreeningAgent
-from agents.crisis_detection_agent import CrisisDetectionAgent
+from agents.primary_screening_agent.screening_agent import PrimaryScreeningAgent
+from agents.crisis_detection_agent.crisis_agent import CrisisDetectionAgent
 from agents.therapeutic_intervention_agent import TherapeuticInterventionAgent
 from agents.care_coordination_agent import CareCoordinationAgent
 from agents.progress_analytics_agent import ProgressAnalyticsAgent
@@ -127,8 +133,20 @@ class MentalHealthApp:
     
     def __init__(self):
         self.initialize_app()
-        self.setup_agents()
         self.setup_file_storage()
+        self.setup_agents()
+        
+        # Ensure agents are always available
+        if not hasattr(self, 'primary_screening'):
+            self.primary_screening = None
+        if not hasattr(self, 'crisis_detection'):
+            self.crisis_detection = None
+        if not hasattr(self, 'therapeutic_intervention'):
+            self.therapeutic_intervention = None
+        if not hasattr(self, 'care_coordination'):
+            self.care_coordination = None
+        if not hasattr(self, 'progress_analytics'):
+            self.progress_analytics = None
     
     def initialize_app(self):
         """Initialize the Streamlit app state"""
@@ -169,7 +187,7 @@ class MentalHealthApp:
                 # Initialize agents
                 self.primary_screening = PrimaryScreeningAgent(
                     agent_id="primary-screening-001",
-                    storage_manager=self.storage_manager,
+                    openai_api_key="demo-key",  # Using demo key for now
                     a2a_communicator=self.a2a_communicator,
                     agent_discovery=self.agent_discovery,
                     task_manager=self.task_manager,
@@ -178,7 +196,6 @@ class MentalHealthApp:
                 
                 self.crisis_detection = CrisisDetectionAgent(
                     agent_id="crisis-detection-001",
-                    storage_manager=self.storage_manager,
                     a2a_communicator=self.a2a_communicator,
                     agent_discovery=self.agent_discovery,
                     task_manager=self.task_manager,
@@ -187,29 +204,29 @@ class MentalHealthApp:
                 
                 self.therapeutic_intervention = TherapeuticInterventionAgent(
                     agent_id="therapeutic-intervention-001",
-                    storage_manager=self.storage_manager,
                     a2a_communicator=self.a2a_communicator,
                     agent_discovery=self.agent_discovery,
                     task_manager=self.task_manager,
-                    security=self.security
+                    security=self.security,
+                    storage_manager=self.storage_manager
                 )
                 
                 self.care_coordination = CareCoordinationAgent(
                     agent_id="care-coordination-001",
-                    storage_manager=self.storage_manager,
                     a2a_communicator=self.a2a_communicator,
                     agent_discovery=self.agent_discovery,
                     task_manager=self.task_manager,
-                    security=self.security
+                    security=self.security,
+                    storage_manager=self.storage_manager
                 )
                 
                 self.progress_analytics = ProgressAnalyticsAgent(
                     agent_id="progress-analytics-001",
-                    storage_manager=self.storage_manager,
                     a2a_communicator=self.a2a_communicator,
                     agent_discovery=self.agent_discovery,
                     task_manager=self.task_manager,
-                    security=self.security
+                    security=self.security,
+                    storage_manager=self.storage_manager
                 )
                 
                 st.session_state.agents_initialized = True
@@ -363,7 +380,9 @@ class MentalHealthApp:
             st.subheader("📋 Recent Assessments")
             recent_assessments = self.storage_manager.get_recent_assessments(st.session_state.user_id)
             for assessment in recent_assessments[:3]:
-                st.info(f"**{assessment['type']}** - {assessment['date']}")
+                assessment_type = assessment.get('primary_concern', 'General Assessment')
+                assessment_date = assessment.get('timestamp', 'Unknown Date')
+                st.info(f"**{assessment_type}** - {assessment_date}")
     
     def render_therapy_chat_tab(self):
         """Render the therapy chat interface"""
@@ -594,11 +613,14 @@ class MentalHealthApp:
             with col1:
                 st.write(f"{icon} {name}")
             with col2:
-                status = "🟢 Online" if agent else "🔴 Offline"
+                status = "🟢 Online" if agent is not None else "🔴 Offline"
                 st.write(status)
             with col3:
                 if st.button(f"Test {name}", key=f"test_{name}"):
-                    self.test_agent(agent)
+                    if agent is not None:
+                        self.test_agent(agent)
+                    else:
+                        st.warning(f"{name} agent not initialized")
         
         # Real-time communication log
         st.subheader("📡 Agent Communications")
@@ -671,7 +693,11 @@ class MentalHealthApp:
             self.storage_manager.save_assessment(assessment_data)
             
             # Process with Primary Screening Agent
-            result = self.primary_screening.process_assessment(assessment_data)
+            if self.primary_screening is not None:
+                result = self.primary_screening.process_assessment(assessment_data)
+            else:
+                st.error("Primary Screening Agent not available. Please initialize agents first.")
+                return None
             
             return result
             
