@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Health A2A Agent Ecosystem</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .results {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .results h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .result-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .result-item h4 {
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .result-item p {
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .agent-status {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .agent-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .agent-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .agent-card .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .agent-card .status.online {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .agent-card .status.offline {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Mental Health A2A Agent Ecosystem</h1>
+            <p>Comprehensive mental health support powered by AI agents</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Mental Health Screening -->
+            <div class="card">
+                <h2>Mental Health Screening</h2>
+                <form id="screeningForm">
+                    <div class="form-group">
+                        <label for="userId">User ID</label>
+                        <input type="text" id="userId" value="user-001" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="inputType">Input Type</label>
+                        <select id="inputType" required>
+                            <option value="text">Text Conversation</option>
+                            <option value="assessment">Assessment Form</option>
+                            <option value="voice">Voice Recording</option>
+                            <option value="image">Mood Photo</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="userInput">Your Message or Description</label>
+                        <textarea id="userInput" placeholder="Describe how you're feeling or what's on your mind..." required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn" id="screeningBtn">
+                        Start Mental Health Assessment
+                    </button>
+                </form>
+                
+                <div id="screeningStatus" class="hidden"></div>
+                <div id="screeningResults" class="hidden"></div>
+            </div>
+
+            <!-- Crisis Detection -->
+            <div class="card">
+                <h2>Crisis Detection</h2>
+                <form id="crisisForm">
+                    <div class="form-group">
+                        <label for="crisisUserId">User ID</label>
+                        <input type="text" id="crisisUserId" value="user-001" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="crisisSessionId">Session ID</label>
+                        <input type="text" id="crisisSessionId" placeholder="Enter session ID from screening" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="crisisInput">Interaction to Analyze</label>
+                        <textarea id="crisisInput" placeholder="Enter text to analyze for crisis indicators..." required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn" id="crisisBtn">
+                        Analyze for Crisis Indicators
+                    </button>
+                </form>
+                
+                <div id="crisisStatus" class="hidden"></div>
+                <div id="crisisResults" class="hidden"></div>
+            </div>
+        </div>
+
+        <!-- Agent Status -->
+        <div class="card">
+            <h2>Agent Status</h2>
+            <button class="btn" onclick="loadAgentStatus()" style="width: auto; margin-bottom: 20px;">
+                Refresh Agent Status
+            </button>
+            <div id="agentStatus" class="agent-status">
+                <!-- Agent status will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000';
+        
+        // Screening form handler
+        document.getElementById('screeningForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const userId = document.getElementById('userId').value;
+            const inputType = document.getElementById('inputType').value;
+            const userInput = document.getElementById('userInput').value;
+            
+            const screeningBtn = document.getElementById('screeningBtn');
+            const statusDiv = document.getElementById('screeningStatus');
+            const resultsDiv = document.getElementById('screeningResults');
+            
+            screeningBtn.disabled = true;
+            screeningBtn.innerHTML = '<span class="loading"></span> Processing...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/screening/start`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer demo-token'
+                    },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        input_data: {
+                            text: userInput,
+                            input_type: inputType
+                        },
+                        session_context: {
+                            timestamp: new Date().toISOString(),
+                            source: 'web_interface'
+                        }
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    statusDiv.className = 'status success';
+                    statusDiv.innerHTML = `Screening started successfully. Session ID: ${data.session_id}`;
+                    statusDiv.classList.remove('hidden');
+                    
+                    // Poll for results
+                    pollScreeningResults(data.session_id);
+                } else {
+                    statusDiv.className = 'status error';
+                    statusDiv.innerHTML = `Error: ${data.detail}`;
+                    statusDiv.classList.remove('hidden');
+                }
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = `Error: ${error.message}`;
+                statusDiv.classList.remove('hidden');
+            } finally {
+                screeningBtn.disabled = false;
+                screeningBtn.innerHTML = 'Start Mental Health Assessment';
+            }
+        });
+        
+        // Crisis form handler
+        document.getElementById('crisisForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const userId = document.getElementById('crisisUserId').value;
+            const sessionId = document.getElementById('crisisSessionId').value;
+            const crisisInput = document.getElementById('crisisInput').value;
+            
+            const crisisBtn = document.getElementById('crisisBtn');
+            const statusDiv = document.getElementById('crisisStatus');
+            const resultsDiv = document.getElementById('crisisResults');
+            
+            crisisBtn.disabled = true;
+            crisisBtn.innerHTML = '<span class="loading"></span> Analyzing...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/crisis/analyze`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer demo-token'
+                    },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        session_id: sessionId,
+                        interaction_data: {
+                            text: crisisInput
+                        },
+                        context: {
+                            timestamp: new Date().toISOString(),
+                            source: 'web_interface'
+                        }
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    statusDiv.className = 'status info';
+                    statusDiv.innerHTML = 'Crisis analysis completed';
+                    statusDiv.classList.remove('hidden');
+                    
+                    // Display results
+                    displayCrisisResults(data, resultsDiv);
+                } else {
+                    statusDiv.className = 'status error';
+                    statusDiv.innerHTML = `Error: ${data.detail}`;
+                    statusDiv.classList.remove('hidden');
+                }
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = `Error: ${error.message}`;
+                statusDiv.classList.remove('hidden');
+            } finally {
+                crisisBtn.disabled = false;
+                crisisBtn.innerHTML = 'Analyze for Crisis Indicators';
+            }
+        });
+        
+        // Poll screening results
+        async function pollScreeningResults(sessionId) {
+            const maxAttempts = 30;
+            let attempts = 0;
+            
+            const poll = async () => {
+                try {
+                    const response = await fetch(`${API_BASE}/screening/${sessionId}/status`, {
+                        headers: {
+                            'Authorization': 'Bearer demo-token'
+                        }
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.status === 'completed') {
+                        // Get results
+                        const resultsResponse = await fetch(`${API_BASE}/screening/${sessionId}/results`, {
+                            headers: {
+                                'Authorization': 'Bearer demo-token'
+                            }
+                        });
+                        
+                        const resultsData = await resultsResponse.json();
+                        displayScreeningResults(resultsData);
+                    } else if (data.status === 'error') {
+                        document.getElementById('screeningStatus').className = 'status error';
+                        document.getElementById('screeningStatus').innerHTML = `Error: ${data.message}`;
+                    } else if (attempts < maxAttempts) {
+                        attempts++;
+                        setTimeout(poll, 2000); // Poll every 2 seconds
+                    } else {
+                        document.getElementById('screeningStatus').className = 'status error';
+                        document.getElementById('screeningStatus').innerHTML = 'Screening timed out';
+                    }
+                } catch (error) {
+                    document.getElementById('screeningStatus').className = 'status error';
+                    document.getElementById('screeningStatus').innerHTML = `Error: ${error.message}`;
+                }
+            };
+            
+            poll();
+        }
+        
+        // Display screening results
+        function displayScreeningResults(data) {
+            const resultsDiv = document.getElementById('screeningResults');
+            resultsDiv.innerHTML = `
+                <h3>Assessment Results</h3>
+                <div class="results">
+                    ${data.results.map(result => `
+                        <div class="result-item">
+                            <h4>${result.assessment_type.toUpperCase()} Assessment</h4>
+                            <p><strong>Total Score:</strong> ${result.total_score}</p>
+                            <p><strong>Severity Level:</strong> ${result.severity_level}</p>
+                            <p><strong>Risk Level:</strong> ${result.risk_level}</p>
+                            <p><strong>Follow-up Required:</strong> ${result.requires_follow_up ? 'Yes' : 'No'}</p>
+                            ${result.recommended_actions.length > 0 ? `
+                                <p><strong>Recommended Actions:</strong></p>
+                                <ul>
+                                    ${result.recommended_actions.map(action => `<li>${action}</li>`).join('')}
+                                </ul>
+                            ` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            resultsDiv.classList.remove('hidden');
+        }
+        
+        // Display crisis results
+        function displayCrisisResults(data, resultsDiv) {
+            if (data.crisis_detected) {
+                resultsDiv.innerHTML = `
+                    <h3>Crisis Detection Results</h3>
+                    <div class="results">
+                        <div class="result-item">
+                            <h4>⚠️ Crisis Detected</h4>
+                            <p><strong>Alert Level:</strong> ${data.alert_level}</p>
+                            <p><strong>Risk Assessment:</strong></p>
+                            <ul>
+                                <li>Confidence: ${(data.risk_assessment.confidence_score * 100).toFixed(1)}%</li>
+                                <li>Urgency: ${(data.risk_assessment.urgency_score * 100).toFixed(1)}%</li>
+                                <li>Safety: ${(data.risk_assessment.safety_score * 100).toFixed(1)}%</li>
+                            </ul>
+                            <p><strong>Recommended Actions:</strong></p>
+                            <ul>
+                                ${data.recommended_actions.map(action => `<li>${action}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            } else {
+                resultsDiv.innerHTML = `
+                    <h3>Crisis Detection Results</h3>
+                    <div class="results">
+                        <div class="result-item">
+                            <h4>✅ No Crisis Detected</h4>
+                            <p>The interaction does not show signs of immediate crisis.</p>
+                        </div>
+                    </div>
+                `;
+            }
+            resultsDiv.classList.remove('hidden');
+        }
+        
+        // Load agent status
+        async function loadAgentStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/agents/status`, {
+                    headers: {
+                        'Authorization': 'Bearer demo-token'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                const agentStatusDiv = document.getElementById('agentStatus');
+                agentStatusDiv.innerHTML = data.agents.map(agent => `
+                    <div class="agent-card">
+                        <h3>${agent.agent_id}</h3>
+                        <span class="status ${agent.status === 'available' ? 'online' : 'offline'}">
+                            ${agent.status}
+                        </span>
+                        <p>Capabilities: ${agent.capabilities.length}</p>
+                        <p>Last Activity: ${new Date(agent.last_activity).toLocaleString()}</p>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading agent status:', error);
+            }
+        }
+        
+        // Load agent status on page load
+        window.addEventListener('load', loadAgentStatus);
+    </script>
+</body>
+</html>
