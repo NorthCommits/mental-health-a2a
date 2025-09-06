@@ -7,6 +7,7 @@ immediate crisis intervention when needed.
 
 import asyncio
 import uuid
+import json
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any, Union
 from enum import Enum
@@ -18,7 +19,7 @@ from shared.a2a_protocol.security import A2ASecurity, AgentRole, AccessLevel
 
 from .risk_models import (
     RiskAssessment, CrisisLevel, RiskFactor, CrisisAlert, 
-    SafetyPlan, CrisisIntervention, CrisisStatistics
+    SafetyPlan, CrisisIntervention, CrisisStatistics, CrisisPattern
 )
 from .nlp_models import CrisisNLPModel, SentimentAnalyzer, IntentClassifier
 
@@ -30,6 +31,18 @@ class CrisisAgentStatus(str, Enum):
     CRISIS_RESPONSE = "crisis_response"
     INTERVENTION = "intervention"
     MAINTENANCE = "maintenance"
+
+
+class NeurodivergentCrisisType(str, Enum):
+    """Types of neurodivergent-specific crisis situations"""
+    SENSORY_OVERLOAD = "sensory_overload"
+    MELTDOWN = "meltdown"
+    SHUTDOWN = "shutdown"
+    EXECUTIVE_FUNCTION_FAILURE = "executive_function_failure"
+    SOCIAL_OVERWHELM = "social_overwhelm"
+    ROUTINE_DISRUPTION = "routine_disruption"
+    MASKING_EXHAUSTION = "masking_exhaustion"
+    BURNOUT = "burnout"
 
 
 class CrisisDetectionAgent:
@@ -570,3 +583,418 @@ class CrisisDetectionAgent:
     async def get_safety_plan(self, user_id: str) -> Optional[SafetyPlan]:
         """Get safety plan for a user"""
         return self.safety_plans.get(user_id)
+    
+    async def analyze_neurodivergent_crisis(
+        self,
+        user_id: str,
+        session_id: str,
+        interaction_data: Dict[str, Any],
+        neurodivergent_profile: Optional[Dict[str, Any]] = None
+    ) -> Optional[RiskAssessment]:
+        """
+        Analyze interaction for neurodivergent-specific crisis indicators
+        
+        Args:
+            user_id: ID of the user
+            session_id: ID of the session
+            interaction_data: Data from the interaction
+            neurodivergent_profile: User's neurodivergent traits and needs
+            
+        Returns:
+            RiskAssessment if neurodivergent crisis indicators found, None otherwise
+        """
+        try:
+            text_content = self._extract_text_content(interaction_data)
+            if not text_content:
+                return None
+            
+            # Check for neurodivergent crisis patterns
+            crisis_type = await self._detect_neurodivergent_crisis_type(text_content, neurodivergent_profile)
+            
+            if not crisis_type:
+                return None
+            
+            # Create specialized risk assessment
+            risk_assessment = await self._create_neurodivergent_risk_assessment(
+                user_id, session_id, crisis_type, text_content, neurodivergent_profile
+            )
+            
+            # Handle neurodivergent crisis with appropriate interventions
+            if risk_assessment.crisis_level in [CrisisLevel.CRITICAL, CrisisLevel.EMERGENCY]:
+                await self._handle_neurodivergent_crisis(risk_assessment, crisis_type)
+            
+            return risk_assessment
+            
+        except Exception as e:
+            print(f"Error analyzing neurodivergent crisis: {e}")
+            return None
+    
+    async def _detect_neurodivergent_crisis_type(
+        self, 
+        text_content: str, 
+        neurodivergent_profile: Optional[Dict[str, Any]] = None
+    ) -> Optional[NeurodivergentCrisisType]:
+        """Detect specific type of neurodivergent crisis from text content"""
+        text_lower = text_content.lower()
+        
+        # Sensory overload indicators
+        sensory_keywords = [
+            "too loud", "too bright", "overwhelming", "sensory", "noise", "light",
+            "texture", "smell", "taste", "touch", "overstimulated", "overwhelmed"
+        ]
+        if any(keyword in text_lower for keyword in sensory_keywords):
+            return NeurodivergentCrisisType.SENSORY_OVERLOAD
+        
+        # Meltdown indicators
+        meltdown_keywords = [
+            "meltdown", "breaking down", "can't cope", "losing control", "exploding",
+            "outburst", "tantrum", "screaming", "crying", "angry", "frustrated"
+        ]
+        if any(keyword in text_lower for keyword in meltdown_keywords):
+            return NeurodivergentCrisisType.MELTDOWN
+        
+        # Shutdown indicators
+        shutdown_keywords = [
+            "shutdown", "shut down", "can't speak", "can't move", "frozen",
+            "numb", "disconnected", "dissociated", "gone blank", "empty"
+        ]
+        if any(keyword in text_lower for keyword in shutdown_keywords):
+            return NeurodivergentCrisisType.SHUTDOWN
+        
+        # Executive function failure indicators
+        executive_keywords = [
+            "can't think", "brain fog", "executive function", "can't organize",
+            "can't plan", "can't decide", "overwhelmed by tasks", "paralysis",
+            "can't start", "stuck", "frozen"
+        ]
+        if any(keyword in text_lower for keyword in executive_keywords):
+            return NeurodivergentCrisisType.EXECUTIVE_FUNCTION_FAILURE
+        
+        # Social overwhelm indicators
+        social_keywords = [
+            "social anxiety", "people are too much", "socially exhausted", "masking",
+            "pretending", "acting normal", "socially drained", "people overwhelming"
+        ]
+        if any(keyword in text_lower for keyword in social_keywords):
+            return NeurodivergentCrisisType.SOCIAL_OVERWHELM
+        
+        # Routine disruption indicators
+        routine_keywords = [
+            "routine disrupted", "schedule changed", "unexpected", "surprise",
+            "can't adapt", "change is hard", "routine broken", "plan changed"
+        ]
+        if any(keyword in text_lower for keyword in routine_keywords):
+            return NeurodivergentCrisisType.ROUTINE_DISRUPTION
+        
+        # Masking exhaustion indicators
+        masking_keywords = [
+            "tired of pretending", "exhausted from acting", "masking is hard",
+            "can't keep up the act", "tired of being normal", "pretending is exhausting"
+        ]
+        if any(keyword in text_lower for keyword in masking_keywords):
+            return NeurodivergentCrisisType.MASKING_EXHAUSTION
+        
+        # Burnout indicators
+        burnout_keywords = [
+            "burnout", "burned out", "exhausted", "drained", "can't function",
+            "overwhelmed", "stressed", "anxious", "depressed", "hopeless"
+        ]
+        if any(keyword in text_lower for keyword in burnout_keywords):
+            return NeurodivergentCrisisType.BURNOUT
+        
+        return None
+    
+    async def _create_neurodivergent_risk_assessment(
+        self,
+        user_id: str,
+        session_id: str,
+        crisis_type: NeurodivergentCrisisType,
+        text_content: str,
+        neurodivergent_profile: Optional[Dict[str, Any]] = None
+    ) -> RiskAssessment:
+        """Create risk assessment for neurodivergent crisis"""
+        
+        # Determine crisis level based on type and intensity
+        crisis_level = self._determine_neurodivergent_crisis_level(crisis_type, text_content)
+        
+        # Create appropriate risk factors
+        risk_factors = self._create_neurodivergent_risk_factors(crisis_type, neurodivergent_profile)
+        
+        # Generate intervention recommendations
+        interventions = self._generate_neurodivergent_interventions(crisis_type, crisis_level)
+        
+        return RiskAssessment(
+            assessment_id=str(uuid.uuid4()),
+            user_id=user_id,
+            session_id=session_id,
+            crisis_level=crisis_level,
+            risk_score=self._calculate_neurodivergent_risk_score(crisis_type, crisis_level),
+            confidence=0.8,  # High confidence for neurodivergent patterns
+            risk_factors=risk_factors,
+            crisis_indicators=[crisis_type.value],
+            intervention_recommendations=interventions,
+            requires_immediate_action=crisis_level in [CrisisLevel.CRITICAL, CrisisLevel.EMERGENCY],
+            assessment_timestamp=datetime.utcnow(),
+            context={
+                "neurodivergent_crisis_type": crisis_type.value,
+                "neurodivergent_profile": neurodivergent_profile or {},
+                "text_content": text_content[:500]  # Truncate for storage
+            }
+        )
+    
+    def _determine_neurodivergent_crisis_level(
+        self, 
+        crisis_type: NeurodivergentCrisisType, 
+        text_content: str
+    ) -> CrisisLevel:
+        """Determine crisis level for neurodivergent crisis"""
+        text_lower = text_content.lower()
+        
+        # High-intensity keywords indicate higher crisis levels
+        high_intensity_keywords = [
+            "can't", "unable", "impossible", "never", "always", "completely",
+            "totally", "absolutely", "desperate", "hopeless", "suicidal"
+        ]
+        
+        has_high_intensity = any(keyword in text_lower for keyword in high_intensity_keywords)
+        
+        # Emergency level for certain crisis types with high intensity
+        if crisis_type in [NeurodivergentCrisisType.MELTDOWN, NeurodivergentCrisisType.SHUTDOWN] and has_high_intensity:
+            return CrisisLevel.EMERGENCY
+        
+        # Critical level for most neurodivergent crises with high intensity
+        if has_high_intensity:
+            return CrisisLevel.CRITICAL
+        
+        # High level for most neurodivergent crises
+        if crisis_type in [NeurodivergentCrisisType.MELTDOWN, NeurodivergentCrisisType.SHUTDOWN, NeurodivergentCrisisType.BURNOUT]:
+            return CrisisLevel.HIGH
+        
+        # Medium level for others
+        return CrisisLevel.MEDIUM
+    
+    def _create_neurodivergent_risk_factors(
+        self, 
+        crisis_type: NeurodivergentCrisisType,
+        neurodivergent_profile: Optional[Dict[str, Any]] = None
+    ) -> List[RiskFactor]:
+        """Create risk factors specific to neurodivergent crisis"""
+        risk_factors = []
+        
+        # Add crisis-specific risk factors
+        if crisis_type == NeurodivergentCrisisType.SENSORY_OVERLOAD:
+            risk_factors.append(RiskFactor(
+                factor="sensory_overload",
+                description="Experiencing sensory overwhelm",
+                severity="high",
+                category="sensory_processing"
+            ))
+        
+        elif crisis_type == NeurodivergentCrisisType.MELTDOWN:
+            risk_factors.append(RiskFactor(
+                factor="meltdown",
+                description="Experiencing emotional/behavioral meltdown",
+                severity="critical",
+                category="emotional_regulation"
+            ))
+        
+        elif crisis_type == NeurodivergentCrisisType.SHUTDOWN:
+            risk_factors.append(RiskFactor(
+                factor="shutdown",
+                description="Experiencing shutdown response",
+                severity="critical",
+                category="emotional_regulation"
+            ))
+        
+        elif crisis_type == NeurodivergentCrisisType.EXECUTIVE_FUNCTION_FAILURE:
+            risk_factors.append(RiskFactor(
+                factor="executive_dysfunction",
+                description="Experiencing executive function difficulties",
+                severity="medium",
+                category="cognitive_processing"
+            ))
+        
+        # Add profile-based risk factors
+        if neurodivergent_profile:
+            if neurodivergent_profile.get("sensory_sensitivities"):
+                risk_factors.append(RiskFactor(
+                    factor="sensory_sensitivities",
+                    description="Has known sensory sensitivities",
+                    severity="medium",
+                    category="sensory_processing"
+                ))
+            
+            if neurodivergent_profile.get("social_difficulties"):
+                risk_factors.append(RiskFactor(
+                    factor="social_difficulties",
+                    description="Has known social communication challenges",
+                    severity="medium",
+                    category="social_processing"
+                ))
+        
+        return risk_factors
+    
+    def _generate_neurodivergent_interventions(
+        self, 
+        crisis_type: NeurodivergentCrisisType, 
+        crisis_level: CrisisLevel
+    ) -> List[str]:
+        """Generate intervention recommendations for neurodivergent crisis"""
+        interventions = []
+        
+        if crisis_type == NeurodivergentCrisisType.SENSORY_OVERLOAD:
+            interventions.extend([
+                "Find a quiet, dimly lit space immediately",
+                "Use noise-canceling headphones or earplugs",
+                "Remove or reduce sensory stimuli (bright lights, loud sounds)",
+                "Practice deep breathing or grounding techniques",
+                "Consider weighted blanket or compression clothing"
+            ])
+        
+        elif crisis_type == NeurodivergentCrisisType.MELTDOWN:
+            interventions.extend([
+                "Ensure physical safety - remove harmful objects",
+                "Provide space and time - don't try to stop the meltdown",
+                "Use calming sensory tools if available",
+                "Speak in a calm, low voice",
+                "Avoid physical contact unless requested"
+            ])
+        
+        elif crisis_type == NeurodivergentCrisisType.SHUTDOWN:
+            interventions.extend([
+                "Provide a safe, quiet space",
+                "Don't force communication or interaction",
+                "Offer comfort items or sensory tools",
+                "Be patient and wait for them to re-engage",
+                "Avoid overwhelming them with questions"
+            ])
+        
+        elif crisis_type == NeurodivergentCrisisType.EXECUTIVE_FUNCTION_FAILURE:
+            interventions.extend([
+                "Break tasks into smaller, manageable steps",
+                "Use visual aids or written lists",
+                "Remove distractions and simplify environment",
+                "Offer to help with decision-making",
+                "Provide structure and routine"
+            ])
+        
+        elif crisis_type == NeurodivergentCrisisType.SOCIAL_OVERWHELM:
+            interventions.extend([
+                "Take a break from social situations",
+                "Use communication alternatives (text, writing)",
+                "Practice self-compassion about social challenges",
+                "Connect with understanding friends or support groups",
+                "Consider social skills or therapy support"
+            ])
+        
+        elif crisis_type == NeurodivergentCrisisType.ROUTINE_DISRUPTION:
+            interventions.extend([
+                "Acknowledge the difficulty of unexpected changes",
+                "Help create a new routine or structure",
+                "Provide advance notice for future changes when possible",
+                "Use visual schedules or calendars",
+                "Practice flexibility-building exercises gradually"
+            ])
+        
+        elif crisis_type == NeurodivergentCrisisType.MASKING_EXHAUSTION:
+            interventions.extend([
+                "Take time to unmask and be authentic",
+                "Connect with neurodivergent community",
+                "Practice self-acceptance and self-advocacy",
+                "Set boundaries around masking expectations",
+                "Seek supportive, accepting environments"
+            ])
+        
+        elif crisis_type == NeurodivergentCrisisType.BURNOUT:
+            interventions.extend([
+                "Take a complete break from overwhelming activities",
+                "Focus on basic self-care and rest",
+                "Reduce sensory and social demands",
+                "Engage in preferred, low-demand activities",
+                "Consider professional support for burnout recovery"
+            ])
+        
+        # Add general neurodivergent support
+        interventions.extend([
+            "Remember that neurodivergent experiences are valid",
+            "Consider accommodations and support needs",
+            "Connect with neurodivergent community resources",
+            "Advocate for your needs and boundaries"
+        ])
+        
+        return interventions
+    
+    def _calculate_neurodivergent_risk_score(
+        self, 
+        crisis_type: NeurodivergentCrisisType, 
+        crisis_level: CrisisLevel
+    ) -> float:
+        """Calculate risk score for neurodivergent crisis"""
+        base_scores = {
+            NeurodivergentCrisisType.SENSORY_OVERLOAD: 0.6,
+            NeurodivergentCrisisType.MELTDOWN: 0.8,
+            NeurodivergentCrisisType.SHUTDOWN: 0.8,
+            NeurodivergentCrisisType.EXECUTIVE_FUNCTION_FAILURE: 0.5,
+            NeurodivergentCrisisType.SOCIAL_OVERWHELM: 0.6,
+            NeurodivergentCrisisType.ROUTINE_DISRUPTION: 0.4,
+            NeurodivergentCrisisType.MASKING_EXHAUSTION: 0.7,
+            NeurodivergentCrisisType.BURNOUT: 0.7
+        }
+        
+        level_multipliers = {
+            CrisisLevel.LOW: 0.5,
+            CrisisLevel.MEDIUM: 0.7,
+            CrisisLevel.HIGH: 0.8,
+            CrisisLevel.CRITICAL: 0.9,
+            CrisisLevel.EMERGENCY: 1.0
+        }
+        
+        base_score = base_scores.get(crisis_type, 0.5)
+        multiplier = level_multipliers.get(crisis_level, 0.7)
+        
+        return min(base_score * multiplier, 1.0)
+    
+    async def _handle_neurodivergent_crisis(
+        self, 
+        risk_assessment: RiskAssessment, 
+        crisis_type: NeurodivergentCrisisType
+    ):
+        """Handle neurodivergent crisis with appropriate interventions"""
+        try:
+            # Create crisis alert
+            crisis_alert = CrisisAlert(
+                alert_id=str(uuid.uuid4()),
+                user_id=risk_assessment.user_id,
+                session_id=risk_assessment.session_id,
+                crisis_level=risk_assessment.crisis_level,
+                alert_type=f"neurodivergent_{crisis_type.value}",
+                message=f"Neurodivergent crisis detected: {crisis_type.value}",
+                timestamp=datetime.utcnow(),
+                requires_immediate_action=risk_assessment.requires_immediate_action,
+                intervention_recommendations=risk_assessment.intervention_recommendations
+            )
+            
+            # Store crisis alert
+            self.crisis_alerts.append(crisis_alert)
+            
+            # Send A2A message to other agents
+            await self.a2a_communicator.send_message(
+                A2AMessage(
+                    message_id=str(uuid.uuid4()),
+                    sender_id=self.agent_id,
+                    recipient_id="therapeutic-intervention-001",
+                    message_type=MessageType.CRISIS_ALERT,
+                    content_type=ContentType.JSON,
+                    content=crisis_alert.dict(),
+                    timestamp=datetime.utcnow()
+                )
+            )
+            
+            # Update statistics
+            self.crisis_statistics.total_crises += 1
+            self.crisis_statistics.neurodivergent_crises += 1
+            
+            print(f"Neurodivergent crisis alert created: {crisis_type.value} for user {risk_assessment.user_id}")
+            
+        except Exception as e:
+            print(f"Error handling neurodivergent crisis: {e}")

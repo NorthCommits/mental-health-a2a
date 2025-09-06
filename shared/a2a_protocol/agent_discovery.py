@@ -21,6 +21,7 @@ class CapabilityType(str, Enum):
     PROGRESS_ANALYTICS = "progress_analytics"
     DATA_PROCESSING = "data_processing"
     EMERGENCY_RESPONSE = "emergency_response"
+    ASSESSMENT = "assessment"
 
 
 class InputModality(str, Enum):

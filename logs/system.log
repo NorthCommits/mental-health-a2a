@@ -1,0 +1,7 @@
+2025-09-06 17:10:57,615 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:10:57,621 - mental_health_a2a - INFO - Assessment Progress: User user_1757158846 - Stage: introduction
+2025-09-06 17:11:16,334 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:11:43,104 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:11:45,110 - mental_health_a2a - INFO - System Event: openai_error - {'error': 'Connection error.', 'user_input': 'hi'}
+2025-09-06 17:11:45,119 - mental_health_a2a - INFO - System Event: adaptive_conversation_error - {'error': "'areas_explored'"}
+2025-09-06 17:11:45,548 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}

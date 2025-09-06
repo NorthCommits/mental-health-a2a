@@ -5,6 +5,7 @@ Handles all data persistence using JSON files and directory structures
 
 import json
 import os
+import uuid
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
 from pathlib import Path
@@ -35,6 +36,7 @@ class FileStorageManager:
         self.progress_data_dir = self.base_dir / "progress_data"
         self.trends_dir = self.base_dir / "trends"
         self.reports_dir = self.base_dir / "reports"
+        self.neurodevelopmental_dir = self.base_dir / "neurodevelopmental_assessments"
     
     def setup_directories(self):
         """Create necessary directory structure"""
@@ -55,7 +57,8 @@ class FileStorageManager:
             "care_plans",
             "progress_data",
             "trends",
-            "reports"
+            "reports",
+            "neurodevelopmental_assessments"
         ]
         
         for directory in directories:
@@ -431,3 +434,36 @@ class FileStorageManager:
         except Exception as e:
             print(f"Error saving progress report: {e}")
             return False
+    
+    def save_neurodevelopmental_assessment(self, assessment_data: Dict[str, Any]) -> bool:
+        """Save neurodevelopmental assessment data"""
+        try:
+            assessment_id = assessment_data.get('assessment_id', str(uuid.uuid4()))
+            user_id = assessment_data.get('user_id', 'unknown')
+            
+            # Create user-specific directory
+            user_dir = self.neurodevelopmental_dir / user_id
+            user_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Save assessment
+            assessment_file = user_dir / f"assessment_{assessment_id}.json"
+            with open(assessment_file, 'w') as f:
+                json.dump(assessment_data, f, indent=2, default=str)
+            
+            return True
+        except Exception as e:
+            print(f"Error saving neurodevelopmental assessment: {e}")
+            return False
+    
+    def get_neurodevelopmental_assessments(self, user_id: str) -> List[Dict[str, Any]]:
+        """Get neurodevelopmental assessments for a user"""
+        user_dir = self.neurodevelopmental_dir / user_id
+        if not user_dir.exists():
+            return []
+        
+        assessments = []
+        for assessment_file in user_dir.glob("assessment_*.json"):
+            with open(assessment_file, 'r') as f:
+                assessments.append(json.load(f))
+        
+        return sorted(assessments, key=lambda x: x.get('completed_at', ''), reverse=True)
