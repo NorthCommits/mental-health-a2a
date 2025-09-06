@@ -46,11 +46,11 @@ class AdaptiveConversationManager:
     
     def _create_initial_prompt(self) -> str:
         """Create initial conversation prompt"""
-        return """Hello! I'm here to have a conversation with you about your mental health and well-being. This is a safe, non-judgmental space where we can talk about your experiences, thoughts, and feelings.
+        return """Hey there! I'm really glad you're here. I'm just someone who likes to listen and chat with people about their lives. Sometimes it helps to talk things through with someone who cares, you know? 
 
-I'll ask you questions to better understand how you're doing, but feel free to share whatever feels important to you. There are no right or wrong answers - I'm just here to listen and learn about your unique experiences.
+There's no pressure here - we can talk about whatever you want, whether it's your day, how you're feeling, what's on your mind, or just whatever comes up. I'm genuinely interested in hearing about your experiences.
 
-What would you like to talk about today? You can start with anything that's on your mind, whether it's about your daily life, relationships, work, or anything else that feels relevant to you."""
+What's been going on with you lately? How are you doing?"""
     
     async def generate_adaptive_response(self, 
                                  user_input: str, 
@@ -173,7 +173,11 @@ What would you like to talk about today? You can start with anything that's on y
         
         User input: "{user_input}"
         
-        IMPORTANT: If the user mentions suicidal thoughts, self-harm, or wanting to die, set urgency_level to "high" and include crisis indicators.
+        CRITICAL: If the user mentions ANY of the following, set urgency_level to "high" and include crisis indicators:
+        - "hurt myself", "hurting myself", "hurt myself", "self-harm", "self harm"
+        - "kill myself", "killing myself", "suicide", "end it all", "not worth living"
+        - "die", "dying", "want to die", "don't want to live"
+        - "tired of living", "can't go on", "give up"
         
         Provide analysis in JSON format with these fields:
         - anxiety_indicators: list of anxiety-related patterns
@@ -217,17 +221,35 @@ What would you like to talk about today? You can start with anything that's on y
         """Fallback analysis when OpenAI fails"""
         text_lower = user_input.lower()
         
+        # Crisis detection keywords
+        crisis_keywords = [
+            'hurt myself', 'hurting myself', 'hurt myself', 'self-harm', 'self harm',
+            'kill myself', 'killing myself', 'suicide', 'end it all', 'not worth living',
+            'die', 'dying', 'want to die', 'don\'t want to live', 'tired of living',
+            'can\'t go on', 'give up', 'hurt me', 'hurt myself', 'self harm'
+        ]
+        
+        # Check for crisis indicators
+        crisis_indicators = []
+        urgency_level = "low"
+        
+        for keyword in crisis_keywords:
+            if keyword in text_lower:
+                crisis_indicators.append(keyword)
+                urgency_level = "high"
+        
         return {
             "anxiety_indicators": [word for word in ['anxious', 'worry', 'nervous', 'panic', 'fear', 'stress'] if word in text_lower],
             "depression_indicators": [word for word in ['sad', 'depressed', 'hopeless', 'empty', 'tired', 'unmotivated'] if word in text_lower],
             "adhd_indicators": [word for word in ['distracted', 'focus', 'concentrate', 'hyperactive', 'impulsive', 'restless'] if word in text_lower],
             "asd_indicators": [word for word in ['social', 'sensory', 'routine', 'overwhelmed', 'sensitive', 'pattern'] if word in text_lower],
             "trauma_indicators": [word for word in ['trauma', 'ptsd', 'flashback', 'trigger', 'nightmare'] if word in text_lower],
+            "crisis_indicators": crisis_indicators,
             "strengths": [],
             "coping_strategies": [],
-            "emotional_state": "neutral",
-            "urgency_level": "low",
-            "suggested_focus_areas": ["general_wellbeing"]
+            "emotional_state": "distressed" if crisis_indicators else "neutral",
+            "urgency_level": urgency_level,
+            "suggested_focus_areas": ["crisis_support"] if crisis_indicators else ["general_wellbeing"]
         }
     
     def _update_assessment_focus(self, analysis: Dict[str, Any]):
@@ -271,6 +293,14 @@ What would you like to talk about today? You can start with anything that's on y
         # Check for crisis indicators
         is_crisis = analysis.get('urgency_level') == 'high' or analysis.get('crisis_indicators')
         
+        # Log crisis detection
+        if is_crisis:
+            logger.log_system_event("crisis_detected", {
+                "user_input": user_input,
+                "crisis_indicators": analysis.get('crisis_indicators', []),
+                "urgency_level": analysis.get('urgency_level', 'unknown')
+            })
+        
         if is_crisis:
             response_prompt = f"""
             You are a compassionate mental health companion responding to someone in crisis.
@@ -279,36 +309,44 @@ What would you like to talk about today? You can start with anything that's on y
             User's input: "{user_input}"
             
             The user has expressed thoughts of self-harm or suicide. Respond with:
-            1. Immediate empathy and validation of their feelings
-            2. Gentle exploration of their current safety
-            3. Offer to continue the conversation and provide support
-            4. Suggest crisis resources but don't end the conversation abruptly
-            5. Maintain a warm, caring tone while being appropriately concerned
+            1. Immediate empathy and validation of their feelings - acknowledge their pain
+            2. Express genuine care and concern for their wellbeing
+            3. Ask gentle questions about their current safety and support system
+            4. Offer to continue the conversation and provide ongoing support
+            5. Suggest crisis resources but maintain the conversation flow
+            6. Maintain a warm, caring, non-judgmental tone
             
-            Be supportive and understanding. Don't be clinical or cold.
+            IMPORTANT: Don't end the conversation abruptly. Continue being supportive and available.
+            Be understanding and compassionate, not clinical or cold.
             """
         else:
             response_prompt = f"""
-            You are a compassionate, supportive mental health companion. 
-            You're having a conversation with someone about their mental health and well-being.
+            You are a warm, friendly companion who genuinely cares about people. 
+            You're having a casual, natural conversation with someone who might be going through a tough time.
             
             Context: {context}
             User's input: "{user_input}"
             
-            Generate a thoughtful, adaptive response that:
-            1. Acknowledges what they've shared with empathy
-            2. Asks gentle follow-up questions to better understand their experiences
-            3. Shows genuine care and understanding
-            4. Continues the conversation naturally without being pushy
-            5. Maintains a warm, supportive, non-judgmental tone
+            Your goal is to:
+            1. Be a good listener and show genuine interest in their life
+            2. Ask natural follow-up questions that come from curiosity, not assessment
+            3. Make them feel comfortable and understood
+            4. Keep the conversation flowing naturally like talking to a close friend
+            5. Show empathy and support without being clinical or formal
             
-            Keep your response conversational and natural, like a caring friend or therapist would speak.
-            Be supportive and encouraging. Don't be overly clinical or formal.
-            Continue the conversation rather than ending it prematurely.
+            Generate a response that:
+            1. Acknowledges what they've shared in a warm, natural way
+            2. Asks follow-up questions that feel like genuine curiosity about their life
+            3. Shows you care about them as a person, not just their symptoms
+            4. Keeps the conversation going in a relaxed, friendly manner
+            5. Makes them feel heard and valued
+            
+            Be conversational, warm, and natural. Like you're talking to a friend over coffee.
+            Don't be clinical, formal, or assessment-focused. Just be genuinely interested in their life.
             """
         
         try:
-            system_message = "You are a compassionate, supportive mental health companion. You listen with empathy, ask thoughtful questions, and provide gentle guidance. You're here to support and understand, not to diagnose or redirect to professionals unless there's a clear crisis. Continue conversations naturally and warmly."
+            system_message = "You are a warm, friendly companion who genuinely cares about people. You're having a casual conversation with someone who might be going through a tough time. You listen with empathy, show genuine interest in their life, and ask natural follow-up questions that come from curiosity, not assessment. You make them feel comfortable and understood, like talking to a close friend over coffee. You're not clinical or formal - just genuinely interested in their life and experiences."
             
             if is_crisis:
                 system_message = "You are a compassionate mental health companion responding to someone in crisis. You provide immediate empathy, validate their feelings, and offer support while being appropriately concerned about their safety. You're warm, understanding, and don't end conversations abruptly."
@@ -393,30 +431,38 @@ What would you like to talk about today? You can start with anything that's on y
         
         # Use OpenAI to generate comprehensive report
         report_prompt = f"""
-        Based on the following conversation history, generate a comprehensive mental health assessment report.
+        Based on our conversation, I'd like you to share some observations about what I noticed during our chat. Think of this as insights from a caring friend who was really listening.
         
         Conversation History:
         {json.dumps(self.conversation_history, indent=2)}
         
-        Assessment Focus:
+        What I've been noticing:
         {json.dumps(self.assessment_focus, indent=2)}
         
-        Generate a detailed report in JSON format with these sections:
-        - conversation_summary: Brief summary of the conversation
-        - identified_patterns: Mental health patterns identified
-        - potential_conditions: Potential mental health conditions or concerns
-        - strengths_identified: Personal strengths and positive qualities
-        - recommendations: Specific recommendations for the user
-        - resources: Helpful resources and next steps
-        - urgency_level: Assessment of urgency (low/medium/high)
-        - professional_referral: Whether professional help is recommended
+        Please provide your observations in JSON format with this structure:
+        {{
+            "conversation_summary": "What we talked about and what stood out to me",
+            "things_i_noticed": ["Patterns, feelings, or experiences that seemed important"],
+            "strengths_i_saw": ["Positive qualities and strengths I observed"],
+            "challenges_mentioned": ["Difficulties or struggles that came up"],
+            "emotional_patterns": ["How they seemed to be feeling and responding"],
+            "life_factors": ["Things in their life that seemed to be affecting them"],
+            "coping_approaches": ["How they're dealing with things"],
+            "concerns": ["Anything that seemed particularly concerning"],
+            "what_might_help": ["Ideas for support that came to mind"],
+            "overall_impression": "My general sense of how they're doing",
+            "suggestions": ["Gentle suggestions for next steps"],
+            "professional_help_needed": "Whether I think they might benefit from talking to a professional (true/false)"
+        }}
+        
+        Write this like you're a caring friend sharing thoughtful observations, not a clinical assessment. Be warm, understanding, and supportive.
         """
         
         try:
             response = self.client.chat.completions.create(
                 model="gpt-4",
                 messages=[
-                    {"role": "system", "content": "You are a mental health assessment AI. Generate comprehensive, professional assessment reports in valid JSON format."},
+                    {"role": "system", "content": "You are a caring friend who was really listening during a conversation. Share your thoughtful observations about what you noticed, in a warm and supportive way. Generate insights in valid JSON format."},
                     {"role": "user", "content": report_prompt}
                 ],
                 temperature=0.3,

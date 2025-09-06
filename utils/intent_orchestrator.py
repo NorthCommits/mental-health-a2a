@@ -51,7 +51,9 @@ class IntentOrchestrator:
             ],
             IntentType.ASSESSMENT: [
                 "assessment", "evaluation", "screening", "test", "check", "evaluate",
-                "how am i", "mental health", "depression", "anxiety", "symptoms"
+                "how am i", "mental health", "depression", "anxiety", "symptoms",
+                "tired", "sad", "worried", "stressed", "overwhelmed", "difficult",
+                "problem", "issue", "concern", "feeling", "emotion", "mood"
             ],
             IntentType.THERAPY: [
                 "therapy", "counseling", "cbt", "treatment", "coping", "strategies",
@@ -59,7 +61,9 @@ class IntentOrchestrator:
             ],
             IntentType.NEURODEVELOPMENTAL: [
                 "adhd", "autism", "asd", "focus", "attention", "hyperactive",
-                "sensory", "social", "communication", "neurodivergent", "spectrum"
+                "sensory", "social", "communication", "neurodivergent", "spectrum",
+                "bright lights", "sensitive", "tolerate", "socialize", "friends",
+                "concentrate", "distracted", "restless", "impulsive", "routine"
             ],
             IntentType.RESOURCE_REQUEST: [
                 "resources", "help", "support", "information", "where to find",
@@ -109,7 +113,7 @@ class IntentOrchestrator:
         # Find the highest scoring intent
         best_intent = max(intent_scores.items(), key=lambda x: x[1]["score"])
         intent_type = best_intent[0]
-        confidence = best_intent[1]["score"]
+        confidence = float(best_intent[1]["score"])
         
         # Additional context analysis
         analysis_data = {
@@ -126,6 +130,16 @@ class IntentOrchestrator:
             "confidence": confidence,
             "analysis_data": analysis_data
         })
+        
+        # Log the detected intent clearly
+        logger.log_system_event("intent_detected", {
+            "intent": str(intent_type),
+            "confidence": confidence,
+            "user_input": user_input
+        })
+        
+        # Log intent in a more readable format
+        logger.logger.info(f"[INTENT] Detected Intent: {str(intent_type)} | Confidence: {confidence:.1%} | Input: {user_input[:50]}...")
         
         return intent_type, confidence, analysis_data
     
@@ -277,21 +291,54 @@ class IntentOrchestrator:
         """Find agents suitable for the required capabilities"""
         suitable_agents = []
         
+        # Log what capabilities we're looking for
+        logger.log_system_event("agent_search", {
+            "required_capabilities": [str(cap) for cap in required_capabilities],
+            "analysis_data": analysis_data
+        })
+        
         for capability in required_capabilities:
-            agents = await self.agent_discovery.discover_agents_by_capability(capability)
-            
-            for agent in agents:
-                if agent not in suitable_agents:
-                    # Check if agent is available and not overloaded
-                    if (agent.availability_status == "available" and 
-                        self.agent_workloads.get(agent.agent_id, 0) < agent.max_concurrent_tasks):
-                        suitable_agents.append(agent)
+            try:
+                agents = await self.agent_discovery.discover_agents_by_capability(capability)
+                logger.log_system_event("capability_search", {
+                    "capability": str(capability),
+                    "agents_found": len(agents),
+                    "agent_ids": [agent.agent_id for agent in agents]
+                })
+                
+                # Debug: Log more details about the search
+                logger.logger.info(f"[DEBUG] Searching for capability: {capability}")
+                logger.logger.info(f"[DEBUG] Found {len(agents)} agents for capability {capability}")
+                for agent in agents:
+                    logger.logger.info(f"[DEBUG] Agent: {agent.agent_id} - Status: {agent.availability_status}")
+                
+                for agent in agents:
+                    if agent not in suitable_agents:
+                        # Check if agent is available and not overloaded
+                        if (agent.availability_status == "available" and 
+                            self.agent_workloads.get(agent.agent_id, 0) < agent.max_concurrent_tasks):
+                            suitable_agents.append(agent)
+                            logger.log_system_event("agent_selected", {
+                                "agent_id": agent.agent_id,
+                                "capability": str(capability),
+                                "availability": agent.availability_status
+                            })
+            except Exception as e:
+                logger.log_system_event("agent_discovery_error", {
+                    "capability": str(capability),
+                    "error": str(e)
+                })
         
         # Sort by response time and workload
         suitable_agents.sort(key=lambda x: (
             x.response_time_sla,
             self.agent_workloads.get(x.agent_id, 0)
         ))
+        
+        logger.log_system_event("agent_search_result", {
+            "suitable_agents_found": len(suitable_agents),
+            "agent_ids": [agent.agent_id for agent in suitable_agents]
+        })
         
         return suitable_agents
     

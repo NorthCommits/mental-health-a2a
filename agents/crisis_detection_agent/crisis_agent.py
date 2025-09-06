@@ -125,33 +125,61 @@ class CrisisDetectionAgent:
     
     async def _register_agent_capabilities(self):
         """Register agent capabilities with the discovery service"""
+        from shared.a2a_protocol.agent_discovery import Capability
+        
+        # Create capability objects following A2A protocol
+        crisis_detection_capability = Capability(
+            capability_type=CapabilityType.CRISIS_DETECTION,
+            description="Real-time crisis detection and intervention",
+            input_modalities=[
+                InputModality.TEXT,
+                InputModality.AUDIO,
+                InputModality.IMAGE
+            ],
+            output_formats=[
+                OutputFormat.CRISIS_ALERT,
+                OutputFormat.STRUCTURED_DATA
+            ],
+            parameters={
+                "response_time_sla": 1.0,  # 1 second for crisis detection
+                "accuracy_threshold": 0.85,
+                "privacy_level": "maximum"
+            }
+        )
+        
+        emergency_response_capability = Capability(
+            capability_type=CapabilityType.EMERGENCY_RESPONSE,
+            description="Emergency response and immediate intervention",
+            input_modalities=[
+                InputModality.TEXT,
+                InputModality.AUDIO,
+                InputModality.IMAGE
+            ],
+            output_formats=[
+                OutputFormat.CRISIS_ALERT,
+                OutputFormat.STRUCTURED_DATA
+            ],
+            parameters={
+                "response_time_sla": 0.5,  # 0.5 seconds for emergency response
+                "accuracy_threshold": 0.90,
+                "privacy_level": "maximum"
+            }
+        )
+        
         agent_card = AgentCard(
             agent_id=self.agent_id,
             name="Crisis Detection Agent",
             description="Monitors interactions for crisis indicators and provides immediate intervention",
             version="1.0.0",
             capabilities=[
-                {
-                    "capability_type": CapabilityType.CRISIS_DETECTION,
-                    "description": "Real-time crisis detection and intervention",
-                    "input_modalities": [
-                        InputModality.TEXT,
-                        InputModality.AUDIO,
-                        InputModality.IMAGE
-                    ],
-                    "output_formats": [
-                        OutputFormat.CRISIS_ALERT,
-                        OutputFormat.STRUCTURED_DATA
-                    ],
-                    "parameters": {
-                        "response_time_sla": 1.0,  # 1 second for crisis detection
-                        "accuracy_threshold": 0.85,
-                        "privacy_level": "maximum"
-                    }
-                }
+                crisis_detection_capability,
+                emergency_response_capability
             ],
             contact_endpoint=f"http://localhost:8000/agents/{self.agent_id}",
-            compliance_certifications=["hipaa", "crisis_intervention_standards"]
+            compliance_certifications=["hipaa", "crisis_intervention_standards"],
+            availability_status="available",
+            response_time_sla=1.0,
+            max_concurrent_tasks=10
         )
         
         await self.agent_discovery.register_agent(agent_card)
@@ -498,27 +526,38 @@ class CrisisDetectionAgent:
             print(f"Error handling overdue intervention: {e}")
     
     async def _handle_crisis_alert(self, message: A2AMessage) -> Optional[Dict[str, Any]]:
-        """Handle incoming crisis alerts"""
+        """Handle incoming crisis alerts following A2A protocol"""
         try:
             # Process crisis alert from other agents
-            alert_data = json.loads(message.parts[0].content) if message.parts else {}
+            if not message.parts:
+                return {"error": "No message parts found"}
+                
+            alert_data = json.loads(message.parts[0].content)
+            
+            # Log the crisis alert
+            print(f"[CRISIS] Received crisis alert from {message.sender_agent_id}: {alert_data.get('alert_id')}")
             
             # Acknowledge the alert
             return {
                 "status": "acknowledged",
                 "message": "Crisis alert received and being processed",
-                "alert_id": alert_data.get("alert_id")
+                "alert_id": alert_data.get("alert_id"),
+                "processed_by": self.agent_id,
+                "timestamp": datetime.utcnow().isoformat()
             }
             
         except Exception as e:
             print(f"Error handling crisis alert: {e}")
-            return {"error": str(e)}
+            return {"error": str(e), "status": "failed"}
     
     async def _handle_task_request(self, message: A2AMessage) -> Optional[Dict[str, Any]]:
-        """Handle incoming task requests"""
+        """Handle incoming task requests following A2A protocol"""
         try:
             # Process task request
-            task_data = message.parts[0].content if message.parts else ""
+            if not message.parts:
+                return {"error": "No message parts found"}
+                
+            task_data = message.parts[0].content
             
             # Create task
             task = await self.task_manager.create_task(
@@ -534,12 +573,14 @@ class CrisisDetectionAgent:
             return {
                 "task_id": task.task_id,
                 "status": "accepted",
-                "message": "Crisis detection task accepted"
+                "message": "Crisis detection task accepted",
+                "assigned_to": self.agent_id,
+                "timestamp": datetime.utcnow().isoformat()
             }
             
         except Exception as e:
             print(f"Error handling task request: {e}")
-            return {"error": str(e)}
+            return {"error": str(e), "status": "failed"}
     
     async def _handle_collaboration(self, message: A2AMessage) -> Optional[Dict[str, Any]]:
         """Handle collaboration messages"""
@@ -977,18 +1018,27 @@ class CrisisDetectionAgent:
             # Store crisis alert
             self.crisis_alerts.append(crisis_alert)
             
-            # Send A2A message to other agents
-            await self.a2a_communicator.send_message(
-                A2AMessage(
-                    message_id=str(uuid.uuid4()),
-                    sender_id=self.agent_id,
-                    recipient_id="therapeutic-intervention-001",
-                    message_type=MessageType.CRISIS_ALERT,
+            # Send A2A message to other agents following protocol standards
+            from shared.a2a_protocol.communication_layer import A2AMessagePart
+            
+            message_parts = [
+                A2AMessagePart(
                     content_type=ContentType.JSON,
-                    content=crisis_alert.dict(),
-                    timestamp=datetime.utcnow()
+                    content=json.dumps(crisis_alert.model_dump()),
+                    metadata={"crisis_level": crisis_alert.crisis_level.value}
                 )
+            ]
+            
+            crisis_message = A2AMessage(
+                message_id=str(uuid.uuid4()),
+                sender_agent_id=self.agent_id,
+                recipient_agent_id="therapeutic-intervention-001",
+                message_type=MessageType.CRISIS_ALERT,
+                parts=message_parts,
+                timestamp=datetime.utcnow()
             )
+            
+            await self.a2a_communicator.send_message(crisis_message)
             
             # Update statistics
             self.crisis_statistics.total_crises += 1

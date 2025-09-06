@@ -14,6 +14,7 @@ import streamlit as st
 import json
 import os
 import uuid
+import asyncio
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
 import pandas as pd
@@ -213,7 +214,7 @@ class MentalHealthApp:
     def __init__(self):
         self.initialize_app()
         self.setup_file_storage()
-        self.setup_agents()
+        asyncio.run(self.setup_agents())
         self.setup_adaptive_systems()
         
         # Ensure conversation_manager is always available
@@ -243,9 +244,29 @@ class MentalHealthApp:
                 logger.log_system_event("openai_key_missing", {"error": "OpenAI API key not found"})
                 return
             
-            # Check if A2A components are available
+            # Check if A2A components are available, reinitialize if needed
             a2a_communicator = getattr(self, 'a2a_communicator', None)
             agent_discovery = getattr(self, 'agent_discovery', None)
+            
+            # If A2A components are missing, try to reinitialize them
+            if a2a_communicator is None or agent_discovery is None:
+                logger.log_system_event("a2a_components_missing", {
+                    "a2a_communicator_available": a2a_communicator is not None,
+                    "agent_discovery_available": agent_discovery is not None
+                })
+                # Try to reinitialize A2A components
+                try:
+                    self.a2a_communicator = A2ACommunicator("main-orchestrator", "http://localhost:8000")
+                    self.agent_discovery = AgentDiscovery()
+                    a2a_communicator = self.a2a_communicator
+                    agent_discovery = self.agent_discovery
+                    logger.log_system_event("a2a_components_reinitialized", {
+                        "success": True
+                    })
+                except Exception as e:
+                    logger.log_system_event("a2a_components_reinit_failed", {
+                        "error": str(e)
+                    })
             
             # Initialize adaptive conversation manager
             self.conversation_manager = AdaptiveConversationManager(
@@ -267,7 +288,7 @@ class MentalHealthApp:
             })
             
         except Exception as e:
-            logger.log_system_event("adaptive_systems_error", {"error": str(e)})
+            logger.log_error("configuration_error", f"Failed to setup adaptive systems: {str(e)}", "500", {"error": str(e)})
     
     def initialize_app(self):
         """Initialize the Streamlit app state"""
@@ -295,16 +316,24 @@ class MentalHealthApp:
         self.session_manager = SessionManager(self.storage_manager)
         self.therapeutic_modules = TherapeuticModules()
     
-    def setup_agents(self):
+    async def setup_agents(self):
         """Initialize all A2A agents"""
-        if not st.session_state.agents_initialized:
-            try:
-                # Initialize A2A components
+        try:
+            # Always initialize A2A components (they're lightweight)
+            if not hasattr(self, 'a2a_communicator') or self.a2a_communicator is None:
                 self.a2a_communicator = A2ACommunicator("main-orchestrator", "http://localhost:8000")
                 self.agent_discovery = AgentDiscovery()
                 self.task_manager = TaskManager()
                 self.security = A2ASecurity(secret_key="demo-secret-key")
-                
+                logger.log_system_event("a2a_components_initialized", {
+                    "a2a_communicator": True,
+                    "agent_discovery": True,
+                    "task_manager": True,
+                    "security": True
+                })
+            
+            # Only initialize agents if not already done
+            if not st.session_state.agents_initialized:
                 # Initialize agents
                 self.primary_screening = PrimaryScreeningAgent(
                     agent_id="primary-screening-001",
@@ -314,6 +343,8 @@ class MentalHealthApp:
                     task_manager=self.task_manager,
                     security=self.security
                 )
+                # Initialize the agent
+                await self.primary_screening.initialize()
                 
                 self.crisis_detection = CrisisDetectionAgent(
                     agent_id="crisis-detection-001",
@@ -322,6 +353,7 @@ class MentalHealthApp:
                     task_manager=self.task_manager,
                     security=self.security
                 )
+                await self.crisis_detection.initialize()
                 
                 self.therapeutic_intervention = TherapeuticInterventionAgent(
                     agent_id="therapeutic-intervention-001",
@@ -331,6 +363,7 @@ class MentalHealthApp:
                     security=self.security,
                     storage_manager=self.storage_manager
                 )
+                await self.therapeutic_intervention.initialize()
                 
                 self.care_coordination = CareCoordinationAgent(
                     agent_id="care-coordination-001",
@@ -340,6 +373,7 @@ class MentalHealthApp:
                     security=self.security,
                     storage_manager=self.storage_manager
                 )
+                await self.care_coordination.initialize()
                 
                 self.progress_analytics = ProgressAnalyticsAgent(
                     agent_id="progress-analytics-001",
@@ -349,6 +383,7 @@ class MentalHealthApp:
                     security=self.security,
                     storage_manager=self.storage_manager
                 )
+                await self.progress_analytics.initialize()
                 
                 self.neurodevelopmental_assessment = NeurodevelopmentalAssessmentAgent(
                     agent_id="neurodevelopmental-assessment-001",
@@ -358,15 +393,9 @@ class MentalHealthApp:
                     security=self.security,
                     storage_manager=self.storage_manager
                 )
+                await self.neurodevelopmental_assessment.initialize()
                 
-                # Initialize agents asynchronously
-                import asyncio
-                asyncio.run(self.primary_screening.initialize())
-                asyncio.run(self.crisis_detection.initialize())
-                asyncio.run(self.therapeutic_intervention.initialize())
-                asyncio.run(self.care_coordination.initialize())
-                asyncio.run(self.progress_analytics.initialize())
-                asyncio.run(self.neurodevelopmental_assessment.initialize())
+                # All agents have been initialized above
                 
                 # Store agents in session state
                 st.session_state.primary_screening = self.primary_screening
@@ -377,12 +406,15 @@ class MentalHealthApp:
                 st.session_state.neurodevelopmental_assessment = self.neurodevelopmental_assessment
                 
                 st.session_state.agents_initialized = True
+                logger.log_success("agent_initialized", "All A2A agents successfully initialized and ready", "200", {"agents_count": 6})
                 st.success("🧠 Mental Health A2A Agents initialized successfully!")
                 
-            except Exception as e:
-                st.error(f"Failed to initialize agents: {str(e)}")
-        else:
-            # Load agents from session state
+        except Exception as e:
+            logger.log_error("agent_initialization_failed", f"Failed to initialize agents: {str(e)}", "500", {"error": str(e)})
+            st.error(f"Failed to initialize agents: {str(e)}")
+        
+        # Load agents from session state if already initialized
+        if st.session_state.agents_initialized:
             self.primary_screening = st.session_state.get('primary_screening')
             self.crisis_detection = st.session_state.get('crisis_detection')
             self.therapeutic_intervention = st.session_state.get('therapeutic_intervention')
@@ -635,12 +667,33 @@ class MentalHealthApp:
         # Use adaptive conversation system
         if hasattr(self, 'conversation_manager') and self.conversation_manager:
             try:
+                # Show typing indicator
+                typing_placeholder = st.empty()
+                typing_placeholder.markdown("""
+                <div style="background: #f0f2f6; padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid #667eea;">
+                    <strong>Assessment Agent:</strong> <span style="color: #666;">typing...</span>
+                    <div style="display: inline-block; margin-left: 10px;">
+                        <span style="animation: typing 1.5s infinite;">●●●</span>
+                    </div>
+                </div>
+                <style>
+                @keyframes typing {
+                    0%, 20% { opacity: 0; }
+                    50% { opacity: 1; }
+                    100% { opacity: 0; }
+                }
+                </style>
+                """, unsafe_allow_html=True)
+                
                 # Generate adaptive response
                 import asyncio
                 response_data = asyncio.run(self.conversation_manager.generate_adaptive_response(
                     user_input=user_message,
                     user_id=user_id
                 ))
+                
+                # Clear typing indicator
+                typing_placeholder.empty()
                 
                 ai_response = response_data['response']
                 analysis = response_data['analysis']
@@ -912,62 +965,95 @@ class MentalHealthApp:
     
     def display_mental_health_report(self, report: dict):
         """Display the mental health report"""
-        st.markdown("## Mental Health Assessment Report")
+        st.markdown("## What I Noticed During Our Chat")
         st.markdown("---")
         
-        # Conversation Analysis
+        # Conversation Summary
         if 'conversation_summary' in report:
-            st.markdown("### Conversation Analysis")
+            st.markdown("### What We Talked About")
             st.write(report['conversation_summary'])
         
-        # Potential Areas of Focus
-        if 'potential_conditions' in report and report['potential_conditions']:
-            st.markdown("### Potential Areas of Focus")
-            for condition in report['potential_conditions']:
-                st.markdown(f"• {condition}")
+        # Things I Noticed
+        if 'things_i_noticed' in report and report['things_i_noticed']:
+            st.markdown("### Things That Stood Out to Me")
+            for item in report['things_i_noticed']:
+                st.markdown(f"• {item}")
         
         # Strengths
-        if 'strengths' in report and report['strengths']:
-            st.markdown("### Your Strengths")
+        if 'strengths_i_saw' in report and report['strengths_i_saw']:
+            st.markdown("### Strengths I Observed")
+            for strength in report['strengths_i_saw']:
+                st.markdown(f"• {strength}")
+        elif 'strengths' in report and report['strengths']:
+            st.markdown("### Strengths I Observed")
             for strength in report['strengths']:
                 st.markdown(f"• {strength}")
         elif 'strengths_identified' in report and report['strengths_identified']:
-            st.markdown("### Your Strengths")
+            st.markdown("### Strengths I Observed")
             for strength in report['strengths_identified']:
                 st.markdown(f"• {strength}")
         
-        # Recommendations
-        if 'recommendations' in report and report['recommendations']:
-            st.markdown("### Recommendations")
+        # Challenges
+        if 'challenges_mentioned' in report and report['challenges_mentioned']:
+            st.markdown("### Challenges You Mentioned")
+            for challenge in report['challenges_mentioned']:
+                st.markdown(f"• {challenge}")
+        
+        # Emotional Patterns
+        if 'emotional_patterns' in report and report['emotional_patterns']:
+            st.markdown("### How You Seemed to Be Feeling")
+            for pattern in report['emotional_patterns']:
+                st.markdown(f"• {pattern}")
+        
+        # Life Factors
+        if 'life_factors' in report and report['life_factors']:
+            st.markdown("### Things in Your Life That Seemed Important")
+            for factor in report['life_factors']:
+                st.markdown(f"• {factor}")
+        
+        # Coping Approaches
+        if 'coping_approaches' in report and report['coping_approaches']:
+            st.markdown("### How You're Dealing With Things")
+            for approach in report['coping_approaches']:
+                st.markdown(f"• {approach}")
+        
+        # Overall Impression
+        if 'overall_impression' in report:
+            st.markdown("### My Overall Sense")
+            st.write(report['overall_impression'])
+        
+        # Suggestions
+        if 'suggestions' in report and report['suggestions']:
+            st.markdown("### Gentle Suggestions")
+            for suggestion in report['suggestions']:
+                st.markdown(f"• {suggestion}")
+        elif 'recommendations' in report and report['recommendations']:
+            st.markdown("### Gentle Suggestions")
             for rec in report['recommendations']:
                 st.markdown(f"• {rec}")
         
+        # What Might Help
+        if 'what_might_help' in report and report['what_might_help']:
+            st.markdown("### Ideas That Might Help")
+            for idea in report['what_might_help']:
+                st.markdown(f"• {idea}")
+        
         # Resources
         if 'resources' in report and report['resources']:
-            st.markdown("### Helpful Resources")
+            st.markdown("### Resources You Might Find Helpful")
             for resource in report['resources']:
                 st.markdown(f"• {resource}")
         
         # Next Steps
         if 'next_steps' in report and report['next_steps']:
-            st.markdown("### Suggested Next Steps")
+            st.markdown("### Next Steps to Consider")
             for step in report['next_steps']:
                 st.markdown(f"• {step}")
         
-        # Urgency Level
-        urgency = report.get('urgency_level', 'Low')
-        urgency_color = {
-            'Low': 'green',
-            'Medium': 'orange', 
-            'High': 'red'
-        }.get(urgency, 'green')
-        
-        st.markdown(f"**Urgency Level:** :{urgency_color}[{urgency}]")
-        
-        # Professional Referral
-        if report.get('professional_referral', False):
-            st.markdown("### Professional Referral Recommended")
-            st.warning("Based on our conversation, I recommend seeking professional mental health support. Please consider reaching out to a qualified mental health professional.")
+        # Professional Help
+        if report.get('professional_help_needed', False) or report.get('professional_referral', False):
+            st.markdown("### Professional Support")
+            st.info("Based on our conversation, I think it might be helpful for you to talk to a mental health professional. They can provide additional support and guidance tailored to your specific situation.")
         
         # Display any additional sections that might be present
         for key, value in report.items():
@@ -1923,7 +2009,7 @@ class MentalHealthApp:
     def run(self):
         """Run the main application"""
         # Initialize agents
-        self.setup_agents()
+        asyncio.run(self.setup_agents())
         
         # Render main interface (no sidebar)
         self.render_main_interface()

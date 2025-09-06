@@ -135,8 +135,13 @@ class AgentDiscovery:
         """
         matching_agents = []
         
+        # Debug: Log capability index
+        print(f"[DEBUG] Capability index: {self.capability_index}")
+        print(f"[DEBUG] Looking for capability: {capability_type}")
+        
         # Get agents with the required capability
         agent_ids = self.capability_index.get(capability_type, set())
+        print(f"[DEBUG] Found agent IDs for {capability_type}: {agent_ids}")
         
         for agent_id in agent_ids:
             agent_card = self.registered_agents.get(agent_id)

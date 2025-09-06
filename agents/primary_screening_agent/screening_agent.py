@@ -124,6 +124,26 @@ class PrimaryScreeningAgent:
                         "response_time_sla": 5.0,
                         "privacy_level": "high"
                     }
+                },
+                {
+                    "capability_type": CapabilityType.ASSESSMENT,
+                    "description": "General mental health assessment and evaluation",
+                    "input_modalities": [
+                        InputModality.TEXT,
+                        InputModality.AUDIO,
+                        InputModality.IMAGE,
+                        InputModality.DOCUMENT
+                    ],
+                    "output_formats": [
+                        OutputFormat.ASSESSMENT_SCORE,
+                        OutputFormat.STRUCTURED_DATA,
+                        OutputFormat.CRISIS_ALERT
+                    ],
+                    "parameters": {
+                        "assessment_types": ["general", "screening", "evaluation"],
+                        "response_time_sla": 5.0,
+                        "privacy_level": "high"
+                    }
                 }
             ],
             contact_endpoint=f"http://localhost:8000/agents/{self.agent_id}",

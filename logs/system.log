@@ -120,3 +120,213 @@
 2025-09-06 22:13:31,802 - mental_health_a2a - INFO - Assessment Progress: User user_1757177002 - Stage: introduction
 2025-09-06 22:13:43,730 - mental_health_a2a - INFO - System Event: adaptive_systems_error - {'error': "'MentalHealthApp' object has no attribute 'a2a_communicator'"}
 2025-09-06 22:13:44,020 - mental_health_a2a - INFO - System Event: adaptive_systems_error - {'error': "'MentalHealthApp' object has no attribute 'a2a_communicator'"}
+2025-09-06 22:46:37,211 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified', 'a2a_communicator_available': True, 'agent_discovery_available': True, 'intent_orchestrator_available': True}
+2025-09-06 22:46:37,217 - mental_health_a2a - INFO - Assessment Progress: User user_1757178985 - Stage: introduction
+2025-09-06 22:46:49,273 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified', 'a2a_communicator_available': False, 'agent_discovery_available': False, 'intent_orchestrator_available': False}
+2025-09-06 22:46:55,909 - mental_health_a2a - INFO - Assessment Progress: User user_1757178985 - Stage: introduction
+2025-09-06 22:46:56,487 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified', 'a2a_communicator_available': False, 'agent_discovery_available': False, 'intent_orchestrator_available': False}
+2025-09-06 22:51:08,225 - mental_health_a2a - INFO - System Event: a2a_components_initialized - {'a2a_communicator': True, 'agent_discovery': True, 'task_manager': True, 'security': True}
+2025-09-06 22:51:21,463 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified', 'a2a_communicator_available': True, 'agent_discovery_available': True, 'intent_orchestrator_available': True}
+2025-09-06 22:51:21,470 - mental_health_a2a - INFO - Assessment Progress: User user_1757179267 - Stage: introduction
+2025-09-06 22:51:30,644 - mental_health_a2a - INFO - System Event: a2a_components_initialized - {'a2a_communicator': True, 'agent_discovery': True, 'task_manager': True, 'security': True}
+2025-09-06 22:51:31,026 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified', 'a2a_communicator_available': True, 'agent_discovery_available': True, 'intent_orchestrator_available': True}
+2025-09-06 22:51:38,286 - mental_health_a2a - INFO - System Event: intent_analysis - {'user_input': 'hi', 'detected_intent': <IntentType.CRISIS: 'crisis'>, 'confidence': 0.0, 'analysis_data': {'intent_scores': {<IntentType.CRISIS: 'crisis'>: {'score': 0.0, 'matches': []}, <IntentType.ASSESSMENT: 'assessment'>: {'score': 0.0, 'matches': []}, <IntentType.THERAPY: 'therapy'>: {'score': 0.0, 'matches': []}, <IntentType.NEURODEVELOPMENTAL: 'neurodevelopmental'>: {'score': 0.0, 'matches': []}, <IntentType.RESOURCE_REQUEST: 'resource_request'>: {'score': 0.0, 'matches': []}, <IntentType.PROGRESS_TRACKING: 'progress_tracking'>: {'score': 0.0, 'matches': []}, <IntentType.APPOINTMENT: 'appointment'>: {'score': 0.0, 'matches': []}}, 'context_indicators': [], 'urgency_level': 'low', 'emotional_tone': 'neutral'}}
+2025-09-06 22:51:38,286 - mental_health_a2a - INFO - System Event: no_suitable_agents - {'intent_type': <IntentType.CRISIS: 'crisis'>, 'required_capabilities': [<CapabilityType.CRISIS_DETECTION: 'crisis_detection'>, <CapabilityType.EMERGENCY_RESPONSE: 'emergency_response'>, <CapabilityType.ASSESSMENT: 'assessment'>]}
+2025-09-06 22:51:38,287 - mental_health_a2a - INFO - System Event: intent_orchestration - {'user_id': 'user_1757179267', 'intent_type': <IntentType.CRISIS: 'crisis'>, 'confidence': 0.0, 'agents_contacted': 0, 'agent_ids': []}
+2025-09-06 22:51:38,289 - mental_health_a2a - INFO - Assessment Progress: User user_1757179267 - Stage: introduction
+2025-09-06 22:51:38,692 - mental_health_a2a - INFO - System Event: a2a_components_initialized - {'a2a_communicator': True, 'agent_discovery': True, 'task_manager': True, 'security': True}
+2025-09-06 22:51:38,903 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified', 'a2a_communicator_available': True, 'agent_discovery_available': True, 'intent_orchestrator_available': True}
+2025-09-06 23:00:47,194 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:00:56,086 - mental_health_a2a - [32mINFO[0m - [200] [SUCCESS] Agent Initialized: All A2A agents successfully initialized and ready | agents_count: 6
+2025-09-06 23:00:56,281 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:00:56,284 - mental_health_a2a - [32mINFO[0m - [ASSESSMENT] Assessment Progress: Conversation Introduction - User: user_1757179846
+2025-09-06 23:01:07,947 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:01:08,412 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:01:15,890 - mental_health_a2a - [32mINFO[0m - [200] [ANALYSIS] Intent Analysis: Analyzing user input to determine appropriate response | Confidence: Low (0.0%)
+2025-09-06 23:01:15,891 - mental_health_a2a - [33mWARNING[0m - [404] [WARNING] Agent Selection: No suitable agents found for this request type
+2025-09-06 23:01:15,891 - mental_health_a2a - [32mINFO[0m - [200] [ORCHESTRATION] Agent Orchestration: Routing user request to appropriate AI agents | User: user_1757179846 | Agents: 0 | Confidence: Low (0.0%)
+2025-09-06 23:01:15,893 - mental_health_a2a - [32mINFO[0m - [ASSESSMENT] Assessment Progress: Conversation Introduction - User: user_1757179846
+2025-09-06 23:01:16,313 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:01:16,499 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:01:49,798 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:01:50,276 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:01:58,125 - mental_health_a2a - [32mINFO[0m - [200] [ANALYSIS] Intent Analysis: Analyzing user input to determine appropriate response | Confidence: Low (0.0%)
+2025-09-06 23:01:58,126 - mental_health_a2a - [33mWARNING[0m - [404] [WARNING] Agent Selection: No suitable agents found for this request type
+2025-09-06 23:01:58,126 - mental_health_a2a - [32mINFO[0m - [200] [ORCHESTRATION] Agent Orchestration: Routing user request to appropriate AI agents | User: user_1757179846 | Agents: 0 | Confidence: Low (0.0%)
+2025-09-06 23:01:58,128 - mental_health_a2a - [32mINFO[0m - [ASSESSMENT] Assessment Progress: Conversation Introduction - User: user_1757179846
+2025-09-06 23:01:58,495 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:01:58,678 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:03:54,793 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:04:04,141 - mental_health_a2a - [32mINFO[0m - [200] [SUCCESS] Agent Initialized: All A2A agents successfully initialized and ready | agents_count: 6
+2025-09-06 23:04:04,369 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:04:04,373 - mental_health_a2a - [32mINFO[0m - [ASSESSMENT] Assessment Progress: Conversation Introduction - User: user_1757180034
+2025-09-06 23:04:16,886 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:04:17,251 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:04:26,116 - mental_health_a2a - [32mINFO[0m - [200] [ANALYSIS] Intent Analysis: Analyzing user input to determine appropriate response | Confidence: Low (0.0%)
+2025-09-06 23:04:26,117 - mental_health_a2a - [33mWARNING[0m - [404] [WARNING] Agent Selection: No suitable agents found for this request type
+2025-09-06 23:04:26,117 - mental_health_a2a - [32mINFO[0m - [200] [ORCHESTRATION] Agent Orchestration: Routing user request to appropriate AI agents | User: user_1757180034 | Agents: 0 | Confidence: Low (0.0%)
+2025-09-06 23:04:26,118 - mental_health_a2a - [32mINFO[0m - [ASSESSMENT] Assessment Progress: Conversation Introduction - User: user_1757180034
+2025-09-06 23:04:26,512 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:04:26,712 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:04:44,979 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:04:45,374 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:04:50,777 - mental_health_a2a - [33mWARNING[0m - [300] [CRISIS] Crisis Detection: Potential crisis indicators identified | Urgency: [HIGH] High
+2025-09-06 23:04:52,848 - mental_health_a2a - [32mINFO[0m - [200] [ANALYSIS] Intent Analysis: Analyzing user input to determine appropriate response | Confidence: Low (0.0%)
+2025-09-06 23:04:52,849 - mental_health_a2a - [33mWARNING[0m - [404] [WARNING] Agent Selection: No suitable agents found for this request type
+2025-09-06 23:04:52,850 - mental_health_a2a - [32mINFO[0m - [200] [ORCHESTRATION] Agent Orchestration: Routing user request to appropriate AI agents | User: user_1757180034 | Agents: 0 | Confidence: Low (0.0%)
+2025-09-06 23:04:52,852 - mental_health_a2a - [32mINFO[0m - [ASSESSMENT] Assessment Progress: Conversation Introduction - User: user_1757180034
+2025-09-06 23:04:53,561 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:04:53,934 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:05:22,386 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:05:22,753 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:05:29,781 - mental_health_a2a - [32mINFO[0m - [200] [ANALYSIS] Intent Analysis: Analyzing user input to determine appropriate response | Confidence: Low (0.0%)
+2025-09-06 23:05:29,782 - mental_health_a2a - [33mWARNING[0m - [404] [WARNING] Agent Selection: No suitable agents found for this request type
+2025-09-06 23:05:29,782 - mental_health_a2a - [32mINFO[0m - [200] [ORCHESTRATION] Agent Orchestration: Routing user request to appropriate AI agents | User: user_1757180034 | Agents: 0 | Confidence: Low (0.0%)
+2025-09-06 23:05:29,784 - mental_health_a2a - [32mINFO[0m - [ASSESSMENT] Assessment Progress: Conversation Introduction - User: user_1757180034
+2025-09-06 23:05:30,176 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:05:30,352 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:06:03,676 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:06:13,417 - mental_health_a2a - [32mINFO[0m - [200] [SUCCESS] Agent Initialized: All A2A agents successfully initialized and ready | agents_count: 6
+2025-09-06 23:06:13,600 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:06:13,607 - mental_health_a2a - [32mINFO[0m - [ASSESSMENT] Assessment Progress: Conversation Introduction - User: user_1757180163
+2025-09-06 23:06:25,021 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:06:25,487 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:06:35,227 - mental_health_a2a - [32mINFO[0m - [200] [ANALYSIS] Intent Analysis: Analyzing user input to determine appropriate response | Confidence: Low (0.0%)
+2025-09-06 23:06:35,227 - mental_health_a2a - [33mWARNING[0m - [404] [WARNING] Agent Selection: No suitable agents found for this request type
+2025-09-06 23:06:35,227 - mental_health_a2a - [32mINFO[0m - [200] [ORCHESTRATION] Agent Orchestration: Routing user request to appropriate AI agents | User: user_1757180163 | Agents: 0 | Confidence: Low (0.0%)
+2025-09-06 23:06:35,229 - mental_health_a2a - [32mINFO[0m - [ASSESSMENT] Assessment Progress: Conversation Introduction - User: user_1757180163
+2025-09-06 23:06:35,641 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:06:35,844 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:06:55,506 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:06:55,703 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:07:03,723 - mental_health_a2a - [32mINFO[0m - [200] [ANALYSIS] Intent Analysis: Analyzing user input to determine appropriate response | Confidence: Low (0.0%)
+2025-09-06 23:07:03,724 - mental_health_a2a - [33mWARNING[0m - [404] [WARNING] Agent Selection: No suitable agents found for this request type
+2025-09-06 23:07:03,724 - mental_health_a2a - [32mINFO[0m - [200] [ORCHESTRATION] Agent Orchestration: Routing user request to appropriate AI agents | User: user_1757180163 | Agents: 0 | Confidence: Low (0.0%)
+2025-09-06 23:07:03,726 - mental_health_a2a - [32mINFO[0m - [ASSESSMENT] Assessment Progress: Conversation Introduction - User: user_1757180163
+2025-09-06 23:07:04,090 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:07:04,270 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:07:52,854 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:07:53,210 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:07:59,709 - mental_health_a2a - [32mINFO[0m - [200] [ANALYSIS] Intent Analysis: Analyzing user input to determine appropriate response | Confidence: Low (9.1%)
+2025-09-06 23:07:59,710 - mental_health_a2a - [33mWARNING[0m - [404] [WARNING] Agent Selection: No suitable agents found for this request type
+2025-09-06 23:07:59,710 - mental_health_a2a - [32mINFO[0m - [200] [ORCHESTRATION] Agent Orchestration: Routing user request to appropriate AI agents | User: user_1757180163 | Agents: 0 | Confidence: Low (9.1%)
+2025-09-06 23:07:59,711 - mental_health_a2a - [32mINFO[0m - [ASSESSMENT] Assessment Progress: Conversation Introduction - User: user_1757180163
+2025-09-06 23:08:00,114 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:08:00,291 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:16:52,053 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:17:01,063 - mental_health_a2a - [32mINFO[0m - [200] [SUCCESS] Agent Initialized: All A2A agents successfully initialized and ready | agents_count: 6
+2025-09-06 23:17:01,257 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:17:01,260 - mental_health_a2a - [32mINFO[0m - [ASSESSMENT] Assessment Progress: Conversation Introduction - User: user_1757180811
+2025-09-06 23:17:10,524 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:17:10,960 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:17:20,493 - mental_health_a2a - [32mINFO[0m - [200] [ANALYSIS] Intent Analysis: Analyzing user input to determine appropriate response | Confidence: Low (0.0%)
+2025-09-06 23:17:20,493 - mental_health_a2a - [31mERROR[0m - [500] [ERROR] Orchestration Error: There was an issue with agent coordination | User: user_1757180811 | Error: '>' not supported between instances of 'str' and 'float'
+2025-09-06 23:17:20,495 - mental_health_a2a - [32mINFO[0m - [ASSESSMENT] Assessment Progress: Conversation Introduction - User: user_1757180811
+2025-09-06 23:17:21,300 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:17:21,781 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:18:58,678 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:19:06,280 - mental_health_a2a - [32mINFO[0m - [200] [SUCCESS] Agent Initialized: All A2A agents successfully initialized and ready | agents_count: 6
+2025-09-06 23:19:06,485 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:19:06,489 - mental_health_a2a - [32mINFO[0m - [ASSESSMENT] Assessment Progress: Conversation Introduction - User: user_1757180938
+2025-09-06 23:19:27,823 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:19:28,020 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:19:34,889 - mental_health_a2a - [32mINFO[0m - [200] [ANALYSIS] Intent Analysis: Analyzing user input to determine appropriate response | Confidence: Low (0.0%)
+2025-09-06 23:19:34,890 - mental_health_a2a - [32mINFO[0m - [200] System Event: intent_detected | Confidence: Low (0.0%)
+2025-09-06 23:19:34,890 - mental_health_a2a - [32mINFO[0m - [200] System Event: agent_search
+2025-09-06 23:19:34,890 - mental_health_a2a - [32mINFO[0m - [200] System Event: capability_search
+2025-09-06 23:19:34,891 - mental_health_a2a - [32mINFO[0m - [200] System Event: capability_search
+2025-09-06 23:19:34,891 - mental_health_a2a - [32mINFO[0m - [200] System Event: capability_search
+2025-09-06 23:19:34,892 - mental_health_a2a - [32mINFO[0m - [200] System Event: agent_search_result
+2025-09-06 23:19:34,892 - mental_health_a2a - [33mWARNING[0m - [404] [WARNING] Agent Selection: No suitable agents found for this request type
+2025-09-06 23:19:34,892 - mental_health_a2a - [32mINFO[0m - [200] [ORCHESTRATION] Agent Orchestration: Routing user request to appropriate AI agents | User: user_1757180938 | Agents: 0 | Confidence: Low (0.0%)
+2025-09-06 23:19:34,893 - mental_health_a2a - [32mINFO[0m - [ASSESSMENT] Assessment Progress: Conversation Introduction - User: user_1757180938
+2025-09-06 23:19:35,316 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:19:35,524 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:20:03,196 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:20:03,643 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:20:09,077 - mental_health_a2a - [32mINFO[0m - [200] [ANALYSIS] Intent Analysis: Analyzing user input to determine appropriate response | Confidence: Low (0.0%)
+2025-09-06 23:20:09,078 - mental_health_a2a - [32mINFO[0m - [200] System Event: intent_detected | Confidence: Low (0.0%)
+2025-09-06 23:20:09,078 - mental_health_a2a - [32mINFO[0m - [200] System Event: agent_search
+2025-09-06 23:20:09,078 - mental_health_a2a - [32mINFO[0m - [200] System Event: capability_search
+2025-09-06 23:20:09,078 - mental_health_a2a - [32mINFO[0m - [200] System Event: capability_search
+2025-09-06 23:20:09,078 - mental_health_a2a - [32mINFO[0m - [200] System Event: capability_search
+2025-09-06 23:20:09,078 - mental_health_a2a - [32mINFO[0m - [200] System Event: agent_search_result
+2025-09-06 23:20:09,079 - mental_health_a2a - [33mWARNING[0m - [404] [WARNING] Agent Selection: No suitable agents found for this request type
+2025-09-06 23:20:09,079 - mental_health_a2a - [32mINFO[0m - [200] [ORCHESTRATION] Agent Orchestration: Routing user request to appropriate AI agents | User: user_1757180938 | Agents: 0 | Confidence: Low (0.0%)
+2025-09-06 23:20:09,080 - mental_health_a2a - [32mINFO[0m - [ASSESSMENT] Assessment Progress: Conversation Introduction - User: user_1757180938
+2025-09-06 23:20:09,493 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:20:09,683 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:21:06,616 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:21:07,112 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:21:13,818 - mental_health_a2a - [32mINFO[0m - [200] [ANALYSIS] Intent Analysis: Analyzing user input to determine appropriate response | Confidence: Low (0.0%)
+2025-09-06 23:21:13,819 - mental_health_a2a - [32mINFO[0m - [200] System Event: intent_detected | Confidence: Low (0.0%)
+2025-09-06 23:21:13,819 - mental_health_a2a - [32mINFO[0m - [200] System Event: agent_search
+2025-09-06 23:21:13,820 - mental_health_a2a - [32mINFO[0m - [200] System Event: capability_search
+2025-09-06 23:21:13,820 - mental_health_a2a - [32mINFO[0m - [200] System Event: capability_search
+2025-09-06 23:21:13,820 - mental_health_a2a - [32mINFO[0m - [200] System Event: capability_search
+2025-09-06 23:21:13,821 - mental_health_a2a - [32mINFO[0m - [200] System Event: agent_search_result
+2025-09-06 23:21:13,822 - mental_health_a2a - [33mWARNING[0m - [404] [WARNING] Agent Selection: No suitable agents found for this request type
+2025-09-06 23:21:13,822 - mental_health_a2a - [32mINFO[0m - [200] [ORCHESTRATION] Agent Orchestration: Routing user request to appropriate AI agents | User: user_1757180938 | Agents: 0 | Confidence: Low (0.0%)
+2025-09-06 23:21:13,825 - mental_health_a2a - [32mINFO[0m - [ASSESSMENT] Assessment Progress: Conversation Introduction - User: user_1757180938
+2025-09-06 23:21:14,651 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:21:15,139 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:21:34,922 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:21:35,322 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:21:47,066 - mental_health_a2a - [32mINFO[0m - [200] [ANALYSIS] Intent Analysis: Analyzing user input to determine appropriate response | Confidence: Low (0.0%)
+2025-09-06 23:21:47,066 - mental_health_a2a - [32mINFO[0m - [200] System Event: intent_detected | Confidence: Low (0.0%)
+2025-09-06 23:21:47,067 - mental_health_a2a - [32mINFO[0m - [200] System Event: agent_search
+2025-09-06 23:21:47,068 - mental_health_a2a - [32mINFO[0m - [200] System Event: capability_search
+2025-09-06 23:21:47,068 - mental_health_a2a - [32mINFO[0m - [200] System Event: capability_search
+2025-09-06 23:21:47,068 - mental_health_a2a - [32mINFO[0m - [200] System Event: capability_search
+2025-09-06 23:21:47,069 - mental_health_a2a - [32mINFO[0m - [200] System Event: agent_search_result
+2025-09-06 23:21:47,069 - mental_health_a2a - [33mWARNING[0m - [404] [WARNING] Agent Selection: No suitable agents found for this request type
+2025-09-06 23:21:47,070 - mental_health_a2a - [32mINFO[0m - [200] [ORCHESTRATION] Agent Orchestration: Routing user request to appropriate AI agents | User: user_1757180938 | Agents: 0 | Confidence: Low (0.0%)
+2025-09-06 23:21:47,072 - mental_health_a2a - [32mINFO[0m - [ASSESSMENT] Assessment Progress: Conversation Introduction - User: user_1757180938
+2025-09-06 23:21:47,915 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:21:48,225 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:21:58,798 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:21:59,297 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:22:05,099 - mental_health_a2a - [32mINFO[0m - [ASSESSMENT] Assessment Progress: Report_Generation - User: user_1757180938
+2025-09-06 23:22:05,100 - mental_health_a2a - [32mINFO[0m - [200] [REPORT] Report Complete: Comprehensive mental health assessment report generated | User: user_1757180938
+2025-09-06 23:22:05,964 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:22:06,466 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:31:10,224 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:31:20,152 - mental_health_a2a - [32mINFO[0m - [200] [SUCCESS] Agent Initialized: All A2A agents successfully initialized and ready | agents_count: 6
+2025-09-06 23:31:20,341 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:31:20,346 - mental_health_a2a - [32mINFO[0m - [ASSESSMENT] Assessment Progress: Conversation Introduction - User: user_1757181669
+2025-09-06 23:31:28,400 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:31:28,600 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:31:36,323 - mental_health_a2a - [32mINFO[0m - [200] [ANALYSIS] Intent Analysis: Analyzing user input to determine appropriate response | Confidence: Low (0.0%)
+2025-09-06 23:31:36,324 - mental_health_a2a - [32mINFO[0m - [200] System Event: intent_detected | Confidence: Low (0.0%)
+2025-09-06 23:31:36,324 - mental_health_a2a - [32mINFO[0m - [INTENT] Detected Intent: IntentType.CRISIS | Confidence: 0.0% | Input: Hi...
+2025-09-06 23:31:36,325 - mental_health_a2a - [32mINFO[0m - [200] System Event: agent_search
+2025-09-06 23:31:36,327 - mental_health_a2a - [32mINFO[0m - [200] System Event: capability_search
+2025-09-06 23:31:36,327 - mental_health_a2a - [32mINFO[0m - [DEBUG] Searching for capability: CapabilityType.CRISIS_DETECTION
+2025-09-06 23:31:36,327 - mental_health_a2a - [32mINFO[0m - [DEBUG] Found 0 agents for capability CapabilityType.CRISIS_DETECTION
+2025-09-06 23:31:36,329 - mental_health_a2a - [32mINFO[0m - [200] System Event: capability_search
+2025-09-06 23:31:36,330 - mental_health_a2a - [32mINFO[0m - [DEBUG] Searching for capability: CapabilityType.EMERGENCY_RESPONSE
+2025-09-06 23:31:36,330 - mental_health_a2a - [32mINFO[0m - [DEBUG] Found 0 agents for capability CapabilityType.EMERGENCY_RESPONSE
+2025-09-06 23:31:36,331 - mental_health_a2a - [32mINFO[0m - [200] System Event: capability_search
+2025-09-06 23:31:36,332 - mental_health_a2a - [32mINFO[0m - [DEBUG] Searching for capability: CapabilityType.ASSESSMENT
+2025-09-06 23:31:36,332 - mental_health_a2a - [32mINFO[0m - [DEBUG] Found 0 agents for capability CapabilityType.ASSESSMENT
+2025-09-06 23:31:36,332 - mental_health_a2a - [32mINFO[0m - [200] System Event: agent_search_result
+2025-09-06 23:31:36,332 - mental_health_a2a - [33mWARNING[0m - [404] [WARNING] Agent Selection: No suitable agents found for this request type
+2025-09-06 23:31:36,333 - mental_health_a2a - [32mINFO[0m - [200] [ORCHESTRATION] Agent Orchestration: Routing user request to appropriate AI agents | User: user_1757181669 | Agents: 0 | Confidence: Low (0.0%)
+2025-09-06 23:31:36,336 - mental_health_a2a - [32mINFO[0m - [ASSESSMENT] Assessment Progress: Conversation Introduction - User: user_1757181669
+2025-09-06 23:31:36,760 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:31:36,967 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:34:31,042 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:34:31,234 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
+2025-09-06 23:34:40,436 - mental_health_a2a - [32mINFO[0m - [200] [ANALYSIS] Intent Analysis: Analyzing user input to determine appropriate response | Confidence: Low (4.3%)
+2025-09-06 23:34:40,437 - mental_health_a2a - [32mINFO[0m - [200] System Event: intent_detected | Confidence: Low (4.3%)
+2025-09-06 23:34:40,437 - mental_health_a2a - [32mINFO[0m - [INTENT] Detected Intent: IntentType.ASSESSMENT | Confidence: 4.3% | Input: I want to take an assessment...
+2025-09-06 23:34:40,437 - mental_health_a2a - [32mINFO[0m - [200] System Event: agent_search
+2025-09-06 23:34:40,438 - mental_health_a2a - [32mINFO[0m - [200] System Event: capability_search
+2025-09-06 23:34:40,438 - mental_health_a2a - [32mINFO[0m - [DEBUG] Searching for capability: CapabilityType.ASSESSMENT
+2025-09-06 23:34:40,438 - mental_health_a2a - [32mINFO[0m - [DEBUG] Found 0 agents for capability CapabilityType.ASSESSMENT
+2025-09-06 23:34:40,439 - mental_health_a2a - [32mINFO[0m - [200] System Event: agent_search_result
+2025-09-06 23:34:40,439 - mental_health_a2a - [33mWARNING[0m - [404] [WARNING] Agent Selection: No suitable agents found for this request type
+2025-09-06 23:34:40,439 - mental_health_a2a - [32mINFO[0m - [200] [ORCHESTRATION] Agent Orchestration: Routing user request to appropriate AI agents | User: user_1757181669 | Agents: 0 | Confidence: Low (4.3%)
+2025-09-06 23:34:40,442 - mental_health_a2a - [32mINFO[0m - [ASSESSMENT] Assessment Progress: Conversation Introduction - User: user_1757181669
+2025-09-06 23:34:40,896 - mental_health_a2a - [32mINFO[0m - [200] [SYSTEM] A2A Communication System: All components successfully initialized and ready
+2025-09-06 23:34:41,102 - mental_health_a2a - [32mINFO[0m - [200] [AI] AI Conversation System: Adaptive conversation manager and intent orchestrator are now active
