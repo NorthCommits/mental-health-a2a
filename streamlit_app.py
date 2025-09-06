@@ -216,6 +216,10 @@ class MentalHealthApp:
         self.setup_agents()
         self.setup_adaptive_systems()
         
+        # Ensure conversation_manager is always available
+        if not hasattr(self, 'conversation_manager'):
+            self.conversation_manager = None
+        
         # Ensure agents are always available
         if not hasattr(self, 'primary_screening'):
             self.primary_screening = None
@@ -239,15 +243,27 @@ class MentalHealthApp:
                 logger.log_system_event("openai_key_missing", {"error": "OpenAI API key not found"})
                 return
             
-            # Initialize adaptive conversation manager
-            self.conversation_manager = AdaptiveConversationManager(openai_api_key)
+            # Check if A2A components are available
+            a2a_communicator = getattr(self, 'a2a_communicator', None)
+            agent_discovery = getattr(self, 'agent_discovery', None)
             
-            # Initialize agent communication manager (will be set up after agents are ready)
+            # Initialize adaptive conversation manager
+            self.conversation_manager = AdaptiveConversationManager(
+                openai_api_key, 
+                a2a_communicator=a2a_communicator,
+                agent_discovery=agent_discovery
+            )
+            
+            # Initialize agent communication manager (simplified for now)
+            # We'll create a simple version that doesn't require A2A components
             self.agent_communication_manager = None
             
             logger.log_system_event("adaptive_systems_initialized", {
                 "conversation_manager": True,
-                "agent_communication_manager": "pending"
+                "agent_communication_manager": "simplified",
+                "a2a_communicator_available": a2a_communicator is not None,
+                "agent_discovery_available": agent_discovery is not None,
+                "intent_orchestrator_available": self.conversation_manager.intent_orchestrator is not None
             })
             
         except Exception as e:
@@ -610,19 +626,21 @@ class MentalHealthApp:
         })
         
         # Check for conversation completion triggers
-        if self.conversation_manager and self.conversation_manager.check_completion_triggers(user_message):
-            # Generate comprehensive mental health report
-            self.generate_comprehensive_mental_health_report()
-            return
+        if hasattr(self, 'conversation_manager') and self.conversation_manager and hasattr(self.conversation_manager, 'check_completion_triggers'):
+            if self.conversation_manager.check_completion_triggers(user_message):
+                # Generate comprehensive mental health report
+                self.generate_comprehensive_mental_health_report()
+                return
         
         # Use adaptive conversation system
-        if self.conversation_manager:
+        if hasattr(self, 'conversation_manager') and self.conversation_manager:
             try:
                 # Generate adaptive response
-                response_data = self.conversation_manager.generate_adaptive_response(
+                import asyncio
+                response_data = asyncio.run(self.conversation_manager.generate_adaptive_response(
                     user_input=user_message,
                     user_id=user_id
-                )
+                ))
                 
                 ai_response = response_data['response']
                 analysis = response_data['analysis']
@@ -865,6 +883,13 @@ class MentalHealthApp:
     
     def suggest_resources(self, text: str) -> list:
         """Suggest helpful resources"""
+        # Log Resource Recommendation Agent activity
+        logger.log_system_event("resource_recommendation_agent_triggered", {
+            "user_input": text,
+            "agent": "Resource Recommendation Agent",
+            "action": "suggesting_resources"
+        })
+        
         return [
             "National Suicide Prevention Lifeline: 988",
             "Crisis Text Line: Text HOME to 741741",
@@ -887,28 +912,74 @@ class MentalHealthApp:
     
     def display_mental_health_report(self, report: dict):
         """Display the mental health report"""
-        st.markdown("### Conversation Analysis")
-        st.write(report['conversation_summary'])
+        st.markdown("## Mental Health Assessment Report")
+        st.markdown("---")
         
-        st.markdown("### Potential Areas of Focus")
-        for condition in report['potential_conditions']:
-            st.markdown(f"• {condition}")
+        # Conversation Analysis
+        if 'conversation_summary' in report:
+            st.markdown("### Conversation Analysis")
+            st.write(report['conversation_summary'])
         
-        st.markdown("### Your Strengths")
-        for strength in report['strengths']:
-            st.markdown(f"• {strength}")
+        # Potential Areas of Focus
+        if 'potential_conditions' in report and report['potential_conditions']:
+            st.markdown("### Potential Areas of Focus")
+            for condition in report['potential_conditions']:
+                st.markdown(f"• {condition}")
         
-        st.markdown("### Recommendations")
-        for rec in report['recommendations']:
-            st.markdown(f"• {rec}")
+        # Strengths
+        if 'strengths' in report and report['strengths']:
+            st.markdown("### Your Strengths")
+            for strength in report['strengths']:
+                st.markdown(f"• {strength}")
+        elif 'strengths_identified' in report and report['strengths_identified']:
+            st.markdown("### Your Strengths")
+            for strength in report['strengths_identified']:
+                st.markdown(f"• {strength}")
         
-        st.markdown("### Helpful Resources")
-        for resource in report['resources']:
-            st.markdown(f"• {resource}")
+        # Recommendations
+        if 'recommendations' in report and report['recommendations']:
+            st.markdown("### Recommendations")
+            for rec in report['recommendations']:
+                st.markdown(f"• {rec}")
         
-        st.markdown("### Suggested Next Steps")
-        for step in report['next_steps']:
-            st.markdown(f"• {step}")
+        # Resources
+        if 'resources' in report and report['resources']:
+            st.markdown("### Helpful Resources")
+            for resource in report['resources']:
+                st.markdown(f"• {resource}")
+        
+        # Next Steps
+        if 'next_steps' in report and report['next_steps']:
+            st.markdown("### Suggested Next Steps")
+            for step in report['next_steps']:
+                st.markdown(f"• {step}")
+        
+        # Urgency Level
+        urgency = report.get('urgency_level', 'Low')
+        urgency_color = {
+            'Low': 'green',
+            'Medium': 'orange', 
+            'High': 'red'
+        }.get(urgency, 'green')
+        
+        st.markdown(f"**Urgency Level:** :{urgency_color}[{urgency}]")
+        
+        # Professional Referral
+        if report.get('professional_referral', False):
+            st.markdown("### Professional Referral Recommended")
+            st.warning("Based on our conversation, I recommend seeking professional mental health support. Please consider reaching out to a qualified mental health professional.")
+        
+        # Display any additional sections that might be present
+        for key, value in report.items():
+            if key not in ['conversation_summary', 'potential_conditions', 'strengths', 'strengths_identified', 
+                          'recommendations', 'resources', 'next_steps', 'urgency_level', 'professional_referral']:
+                if isinstance(value, (list, tuple)) and value:
+                    st.markdown(f"### {key.replace('_', ' ').title()}")
+                    for item in value:
+                        st.markdown(f"• {item}")
+                elif isinstance(value, str) and value:
+                    st.markdown(f"### {key.replace('_', ' ').title()}")
+                    st.write(value)
         
         st.markdown("---")
         st.info("**Important:** This assessment is for informational purposes only and should not replace professional medical advice. Please consult with a qualified mental health professional for a comprehensive evaluation.")
@@ -1436,6 +1507,28 @@ class MentalHealthApp:
                         self.test_agent(agent)
                     else:
                         st.warning(f"{name} agent not initialized")
+        
+        # Intent Orchestrator Status
+        st.subheader("🎯 Intent Orchestrator")
+        
+        if hasattr(self.conversation_manager, 'intent_orchestrator') and self.conversation_manager.intent_orchestrator:
+            st.success("✅ Intent orchestrator is active and routing requests to appropriate agents.")
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                if st.button("Show Agent Status"):
+                    try:
+                        import asyncio
+                        status = asyncio.run(self.conversation_manager.intent_orchestrator.get_agent_status())
+                        st.json(status)
+                    except Exception as e:
+                        st.error(f"Error getting agent status: {e}")
+            
+            with col2:
+                if st.button("Test Orchestration"):
+                    st.info("Orchestration is automatically triggered during conversations. Check the logs below for orchestration events.")
+        else:
+            st.warning("⚠️ Intent orchestrator is not available. A2A components need to be fully initialized.")
         
         # Real-time communication log
         st.subheader("📡 Agent Communications")

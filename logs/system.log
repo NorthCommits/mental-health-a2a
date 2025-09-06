@@ -5,3 +5,118 @@
 2025-09-06 17:11:45,110 - mental_health_a2a - INFO - System Event: openai_error - {'error': 'Connection error.', 'user_input': 'hi'}
 2025-09-06 17:11:45,119 - mental_health_a2a - INFO - System Event: adaptive_conversation_error - {'error': "'areas_explored'"}
 2025-09-06 17:11:45,548 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:18:34,942 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:18:34,951 - mental_health_a2a - INFO - Assessment Progress: User user_1757159306 - Stage: introduction
+2025-09-06 17:18:51,488 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:18:56,788 - mental_health_a2a - INFO - System Event: adaptive_conversation_error - {'error': "'areas_explored'"}
+2025-09-06 17:18:57,215 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:19:17,873 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:19:22,459 - mental_health_a2a - INFO - System Event: adaptive_conversation_error - {'error': "'areas_explored'"}
+2025-09-06 17:19:22,867 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:19:46,138 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:19:50,320 - mental_health_a2a - INFO - System Event: adaptive_conversation_error - {'error': "'areas_explored'"}
+2025-09-06 17:19:50,752 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:20:08,662 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:20:12,936 - mental_health_a2a - INFO - System Event: adaptive_conversation_error - {'error': "'areas_explored'"}
+2025-09-06 17:20:13,350 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:20:37,070 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:20:40,646 - mental_health_a2a - INFO - System Event: adaptive_conversation_error - {'error': "'areas_explored'"}
+2025-09-06 17:20:41,060 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:20:55,391 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:20:57,764 - mental_health_a2a - INFO - System Event: adaptive_conversation_error - {'error': "'areas_explored'"}
+2025-09-06 17:20:58,445 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:21:05,461 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:21:10,425 - mental_health_a2a - INFO - Assessment Progress: User user_1757159306 - Stage: report_generation
+2025-09-06 17:21:10,426 - mental_health_a2a - INFO - System Event: comprehensive_report_generated - {'user_id': 'user_1757159306', 'conversation_length': 15, 'report_sections': ['conversation_summary', 'identified_patterns', 'potential_conditions', 'strengths_identified', 'recommendations', 'resources', 'urgency_level', 'professional_referral']}
+2025-09-06 17:21:11,137 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:23:35,467 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:23:35,475 - mental_health_a2a - INFO - Assessment Progress: User user_1757159605 - Stage: introduction
+2025-09-06 17:24:38,021 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:24:45,125 - mental_health_a2a - INFO - Assessment Progress: User user_1757159605 - Stage: introduction
+2025-09-06 17:24:45,973 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:25:07,368 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:25:13,510 - mental_health_a2a - INFO - Assessment Progress: User user_1757159605 - Stage: introduction
+2025-09-06 17:25:14,362 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:26:03,106 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:26:08,091 - mental_health_a2a - INFO - Assessment Progress: User user_1757159605 - Stage: introduction
+2025-09-06 17:26:08,970 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:26:42,622 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:26:49,764 - mental_health_a2a - INFO - Assessment Progress: User user_1757159605 - Stage: introduction
+2025-09-06 17:26:50,600 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:27:34,265 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:27:39,682 - mental_health_a2a - INFO - Assessment Progress: User user_1757159605 - Stage: introduction
+2025-09-06 17:27:40,486 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:28:28,890 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:28:35,074 - mental_health_a2a - INFO - Assessment Progress: User user_1757159605 - Stage: introduction
+2025-09-06 17:28:35,965 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:28:53,359 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:28:59,579 - mental_health_a2a - INFO - Assessment Progress: User user_1757159605 - Stage: introduction
+2025-09-06 17:29:00,441 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:29:15,814 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:29:23,396 - mental_health_a2a - INFO - Assessment Progress: User user_1757159605 - Stage: report_generation
+2025-09-06 17:29:23,398 - mental_health_a2a - INFO - System Event: comprehensive_report_generated - {'user_id': 'user_1757159605', 'conversation_length': 17, 'report_sections': ['conversation_summary', 'identified_patterns', 'potential_conditions', 'strengths_identified', 'recommendations', 'resources', 'urgency_level', 'professional_referral']}
+2025-09-06 17:29:24,272 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:32:58,384 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:32:58,388 - mental_health_a2a - INFO - Assessment Progress: User user_1757160169 - Stage: introduction
+2025-09-06 17:33:07,987 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:33:13,304 - mental_health_a2a - INFO - Assessment Progress: User user_1757160169 - Stage: introduction
+2025-09-06 17:33:14,134 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:33:41,029 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:33:46,251 - mental_health_a2a - INFO - Assessment Progress: User user_1757160169 - Stage: introduction
+2025-09-06 17:33:46,634 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:34:20,709 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:34:26,847 - mental_health_a2a - INFO - Assessment Progress: User user_1757160169 - Stage: introduction
+2025-09-06 17:34:27,229 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:36:48,001 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:36:52,831 - mental_health_a2a - INFO - Assessment Progress: User user_1757160169 - Stage: introduction
+2025-09-06 17:36:53,350 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'pending'}
+2025-09-06 17:37:16,234 - mental_health_a2a - INFO - System Event: adaptive_systems_error - {'error': "AgentCommunicationManager.__init__() missing 1 required positional argument: 'agent_discovery'"}
+2025-09-06 17:37:16,234 - mental_health_a2a - INFO - System Event: adaptive_systems_error - {'error': "AgentCommunicationManager.__init__() missing 1 required positional argument: 'agent_discovery'"}
+2025-09-06 17:37:51,985 - mental_health_a2a - INFO - System Event: adaptive_systems_error - {'error': "AgentCommunicationManager.__init__() missing 1 required positional argument: 'agent_discovery'"}
+2025-09-06 17:37:51,993 - mental_health_a2a - INFO - Assessment Progress: User user_1757160461 - Stage: introduction
+2025-09-06 17:38:07,943 - mental_health_a2a - INFO - System Event: adaptive_systems_error - {'error': "AgentCommunicationManager.__init__() missing 1 required positional argument: 'agent_discovery'"}
+2025-09-06 17:38:14,749 - mental_health_a2a - INFO - Assessment Progress: User user_1757160461 - Stage: introduction
+2025-09-06 17:38:14,749 - mental_health_a2a - INFO - System Event: adaptive_conversation_error - {'error': "'MentalHealthApp' object has no attribute 'agent_communication_manager'"}
+2025-09-06 17:38:15,200 - mental_health_a2a - INFO - System Event: adaptive_systems_error - {'error': "AgentCommunicationManager.__init__() missing 1 required positional argument: 'agent_discovery'"}
+2025-09-06 17:42:21,658 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified'}
+2025-09-06 17:42:21,663 - mental_health_a2a - INFO - Assessment Progress: User user_1757160732 - Stage: introduction
+2025-09-06 17:42:38,142 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified'}
+2025-09-06 17:42:45,461 - mental_health_a2a - INFO - Assessment Progress: User user_1757160732 - Stage: introduction
+2025-09-06 17:42:45,857 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified'}
+2025-09-06 17:43:05,110 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified'}
+2025-09-06 17:43:10,296 - mental_health_a2a - INFO - Assessment Progress: User user_1757160732 - Stage: introduction
+2025-09-06 17:43:10,698 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified'}
+2025-09-06 17:43:37,404 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified'}
+2025-09-06 17:43:43,898 - mental_health_a2a - INFO - Assessment Progress: User user_1757160732 - Stage: introduction
+2025-09-06 17:43:44,627 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified'}
+2025-09-06 17:44:06,785 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified'}
+2025-09-06 17:44:13,059 - mental_health_a2a - INFO - Assessment Progress: User user_1757160732 - Stage: introduction
+2025-09-06 17:44:13,464 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified'}
+2025-09-06 17:44:25,324 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified'}
+2025-09-06 17:44:31,873 - mental_health_a2a - INFO - Assessment Progress: User user_1757160732 - Stage: introduction
+2025-09-06 17:44:32,328 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified'}
+2025-09-06 17:44:56,002 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified'}
+2025-09-06 17:45:01,142 - mental_health_a2a - INFO - Assessment Progress: User user_1757160732 - Stage: introduction
+2025-09-06 17:45:01,735 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified'}
+2025-09-06 17:45:09,192 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified'}
+2025-09-06 17:45:14,919 - mental_health_a2a - INFO - Assessment Progress: User user_1757160732 - Stage: report_generation
+2025-09-06 17:45:14,919 - mental_health_a2a - INFO - System Event: comprehensive_report_generated - {'user_id': 'user_1757160732', 'conversation_length': 15, 'report_sections': ['conversation_summary', 'identified_patterns', 'potential_conditions', 'strengths_identified', 'recommendations', 'resources', 'urgency_level', 'professional_referral']}
+2025-09-06 17:45:15,378 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified'}
+2025-09-06 20:39:11,805 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified'}
+2025-09-06 20:39:11,812 - mental_health_a2a - INFO - Assessment Progress: User user_1757171342 - Stage: introduction
+2025-09-06 20:39:35,481 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified'}
+2025-09-06 20:39:43,090 - mental_health_a2a - INFO - Assessment Progress: User user_1757171342 - Stage: introduction
+2025-09-06 20:39:43,841 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified'}
+2025-09-06 20:40:19,762 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified'}
+2025-09-06 20:40:26,959 - mental_health_a2a - INFO - Assessment Progress: User user_1757171342 - Stage: introduction
+2025-09-06 20:40:27,761 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified'}
+2025-09-06 20:41:04,365 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified'}
+2025-09-06 20:41:12,392 - mental_health_a2a - INFO - Assessment Progress: User user_1757171342 - Stage: introduction
+2025-09-06 20:41:13,111 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified'}
+2025-09-06 22:07:58,809 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified'}
+2025-09-06 22:07:58,814 - mental_health_a2a - INFO - Assessment Progress: User user_1757176667 - Stage: introduction
+2025-09-06 22:10:23,079 - mental_health_a2a - INFO - System Event: adaptive_systems_error - {'error': "'MentalHealthApp' object has no attribute 'a2a_communicator'"}
+2025-09-06 22:13:31,793 - mental_health_a2a - INFO - System Event: adaptive_systems_initialized - {'conversation_manager': True, 'agent_communication_manager': 'simplified'}
+2025-09-06 22:13:31,802 - mental_health_a2a - INFO - Assessment Progress: User user_1757177002 - Stage: introduction
+2025-09-06 22:13:43,730 - mental_health_a2a - INFO - System Event: adaptive_systems_error - {'error': "'MentalHealthApp' object has no attribute 'a2a_communicator'"}
+2025-09-06 22:13:44,020 - mental_health_a2a - INFO - System Event: adaptive_systems_error - {'error': "'MentalHealthApp' object has no attribute 'a2a_communicator'"}

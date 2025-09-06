@@ -11,14 +11,45 @@ import io
 from datetime import datetime
 from typing import Dict, List, Optional, Any, Union, Tuple
 import openai
-from transformers import pipeline
-import librosa
-import cv2
-import numpy as np
-from PIL import Image
+# Optional imports for audio and image processing
+try:
+    import librosa
+    LIBROSA_AVAILABLE = True
+except ImportError:
+    LIBROSA_AVAILABLE = False
+    print("Warning: librosa library not available. Audio processing features will be disabled.")
+
+try:
+    import cv2
+    CV2_AVAILABLE = True
+except ImportError:
+    CV2_AVAILABLE = False
+    print("Warning: cv2 library not available. Image processing features will be disabled.")
+
+try:
+    import numpy as np
+    NUMPY_AVAILABLE = True
+except ImportError:
+    NUMPY_AVAILABLE = False
+    print("Warning: numpy library not available. Some processing features will be disabled.")
+
+try:
+    from PIL import Image
+    PIL_AVAILABLE = True
+except ImportError:
+    PIL_AVAILABLE = False
+    print("Warning: PIL library not available. Image processing features will be disabled.")
 import pypdf
 from docx import Document
 from pydantic import BaseModel, Field
+
+# Optional transformers import to prevent crashes
+try:
+    from transformers import pipeline
+    TRANSFORMERS_AVAILABLE = True
+except ImportError:
+    TRANSFORMERS_AVAILABLE = False
+    print("Warning: transformers library not available. Some features will be disabled.")
 
 
 class ProcessedInput(BaseModel):
@@ -35,8 +66,19 @@ class TextProcessor:
     
     def __init__(self, openai_api_key: str):
         self.client = openai.OpenAI(api_key=openai_api_key)
-        self.sentiment_analyzer = pipeline("sentiment-analysis", model="cardiffnlp/twitter-roberta-base-sentiment-latest")
-        self.emotion_analyzer = pipeline("text-classification", model="j-hartmann/emotion-english-distilroberta-base")
+        
+        # Initialize transformers models only if available
+        if TRANSFORMERS_AVAILABLE:
+            try:
+                self.sentiment_analyzer = pipeline("sentiment-analysis", model="cardiffnlp/twitter-roberta-base-sentiment-latest")
+                self.emotion_analyzer = pipeline("text-classification", model="j-hartmann/emotion-english-distilroberta-base")
+            except Exception as e:
+                print(f"Warning: Could not initialize transformers models: {e}")
+                self.sentiment_analyzer = None
+                self.emotion_analyzer = None
+        else:
+            self.sentiment_analyzer = None
+            self.emotion_analyzer = None
     
     async def process_text(self, text: str, context: Optional[Dict[str, Any]] = None) -> ProcessedInput:
         """
@@ -50,11 +92,17 @@ class TextProcessor:
             ProcessedInput with extracted information
         """
         try:
-            # Basic sentiment analysis
-            sentiment_result = self.sentiment_analyzer(text)[0]
+            # Basic sentiment analysis (if available)
+            if self.sentiment_analyzer:
+                sentiment_result = self.sentiment_analyzer(text)[0]
+            else:
+                sentiment_result = {"label": "NEUTRAL", "score": 0.5}
             
-            # Emotion analysis
-            emotion_result = self.emotion_analyzer(text)[0]
+            # Emotion analysis (if available)
+            if self.emotion_analyzer:
+                emotion_result = self.emotion_analyzer(text)[0]
+            else:
+                emotion_result = {"label": "neutral", "score": 0.5}
             
             # Extract mental health keywords and phrases
             mental_health_indicators = await self._extract_mental_health_indicators(text)
@@ -161,7 +209,18 @@ class AudioProcessor:
     """Processes audio input for mental health assessment"""
     
     def __init__(self):
-        self.sentiment_analyzer = pipeline("sentiment-analysis", model="cardiffnlp/twitter-roberta-base-sentiment-latest")
+        # Initialize transformers models only if available
+        if TRANSFORMERS_AVAILABLE:
+            try:
+                self.sentiment_analyzer = pipeline("sentiment-analysis", model="cardiffnlp/twitter-roberta-base-sentiment-latest")
+            except Exception as e:
+                print(f"Warning: Could not initialize sentiment analyzer: {e}")
+                self.sentiment_analyzer = None
+        else:
+            self.sentiment_analyzer = None
+        
+        # Check if audio processing libraries are available
+        self.librosa_available = LIBROSA_AVAILABLE
     
     async def process_audio(self, audio_data: bytes, sample_rate: int = 22050) -> ProcessedInput:
         """
@@ -175,6 +234,15 @@ class AudioProcessor:
             ProcessedInput with extracted information
         """
         try:
+            if not self.librosa_available:
+                # Fallback when librosa is not available
+                return ProcessedInput(
+                    modality="audio",
+                    content="Audio processing not available - librosa library missing",
+                    metadata={"error": "librosa not available", "raw_data_size": len(audio_data)},
+                    timestamp=datetime.utcnow()
+                )
+            
             # Convert audio to numpy array
             audio_array = np.frombuffer(audio_data, dtype=np.float32)
             
@@ -218,6 +286,9 @@ class AudioProcessor:
     async def _extract_audio_features(self, audio_array: np.ndarray, sample_rate: int) -> Dict[str, Any]:
         """Extract features from audio for mental health assessment"""
         try:
+            if not self.librosa_available:
+                return {"error": "librosa not available", "features": {}}
+            
             # Extract MFCC features
             mfccs = librosa.feature.mfcc(y=audio_array, sr=sample_rate, n_mfcc=13)
             
@@ -269,7 +340,19 @@ class ImageProcessor:
     """Processes image input for mood assessment and facial expression analysis"""
     
     def __init__(self):
-        self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+        # Check if image processing libraries are available
+        self.cv2_available = CV2_AVAILABLE
+        self.pil_available = PIL_AVAILABLE
+        self.numpy_available = NUMPY_AVAILABLE
+        
+        if self.cv2_available:
+            try:
+                self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+            except Exception as e:
+                print(f"Warning: Could not initialize face cascade: {e}")
+                self.face_cascade = None
+        else:
+            self.face_cascade = None
     
     async def process_image(self, image_data: bytes) -> ProcessedInput:
         """
@@ -282,6 +365,15 @@ class ImageProcessor:
             ProcessedInput with extracted information
         """
         try:
+            if not (self.pil_available and self.cv2_available and self.numpy_available):
+                # Fallback when image processing libraries are not available
+                return ProcessedInput(
+                    modality="image",
+                    content="Image processing not available - required libraries missing",
+                    metadata={"error": "Image processing libraries not available", "raw_data_size": len(image_data)},
+                    timestamp=datetime.utcnow()
+                )
+            
             # Convert bytes to PIL Image
             image = Image.open(io.BytesIO(image_data))
             

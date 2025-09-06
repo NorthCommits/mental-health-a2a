@@ -10,9 +10,16 @@ import json
 from typing import Dict, List, Optional, Any, Tuple
 from datetime import datetime
 import numpy as np
-from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
 import torch
 from pydantic import BaseModel, Field
+
+# Optional transformers import to prevent crashes
+try:
+    from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
+    TRANSFORMERS_AVAILABLE = True
+except ImportError:
+    TRANSFORMERS_AVAILABLE = False
+    print("Warning: transformers library not available. Crisis detection features will be limited.")
 
 
 class CrisisNLPModel:
@@ -22,7 +29,17 @@ class CrisisNLPModel:
     
     def __init__(self, model_name: str = "cardiffnlp/twitter-roberta-base-sentiment-latest"):
         self.model_name = model_name
-        self.sentiment_analyzer = pipeline("sentiment-analysis", model=model_name)
+        
+        # Initialize sentiment analyzer only if transformers is available
+        if TRANSFORMERS_AVAILABLE:
+            try:
+                self.sentiment_analyzer = pipeline("sentiment-analysis", model=model_name)
+            except Exception as e:
+                print(f"Warning: Could not initialize sentiment analyzer: {e}")
+                self.sentiment_analyzer = None
+        else:
+            self.sentiment_analyzer = None
+            
         self.crisis_keywords = self._load_crisis_keywords()
         self.risk_patterns = self._load_risk_patterns()
         
@@ -116,8 +133,11 @@ class CrisisNLPModel:
             Analysis results with crisis indicators
         """
         try:
-            # Basic sentiment analysis
-            sentiment_result = self.sentiment_analyzer(text)[0]
+            # Basic sentiment analysis (if available)
+            if self.sentiment_analyzer:
+                sentiment_result = self.sentiment_analyzer(text)[0]
+            else:
+                sentiment_result = {"label": "NEUTRAL", "score": 0.5}
             
             # Keyword-based analysis
             keyword_analysis = self._analyze_keywords(text)
@@ -286,23 +306,39 @@ class SentimentAnalyzer:
     """Specialized sentiment analyzer for mental health contexts"""
     
     def __init__(self):
-        self.sentiment_pipeline = pipeline(
-            "sentiment-analysis",
-            model="cardiffnlp/twitter-roberta-base-sentiment-latest"
-        )
-        self.emotion_pipeline = pipeline(
-            "text-classification",
-            model="j-hartmann/emotion-english-distilroberta-base"
-        )
+        # Initialize pipelines only if transformers is available
+        if TRANSFORMERS_AVAILABLE:
+            try:
+                self.sentiment_pipeline = pipeline(
+                    "sentiment-analysis",
+                    model="cardiffnlp/twitter-roberta-base-sentiment-latest"
+                )
+                self.emotion_pipeline = pipeline(
+                    "text-classification",
+                    model="j-hartmann/emotion-english-distilroberta-base"
+                )
+            except Exception as e:
+                print(f"Warning: Could not initialize sentiment/emotion pipelines: {e}")
+                self.sentiment_pipeline = None
+                self.emotion_pipeline = None
+        else:
+            self.sentiment_pipeline = None
+            self.emotion_pipeline = None
     
     async def analyze_sentiment(self, text: str) -> Dict[str, Any]:
         """Analyze sentiment and emotion in text"""
         try:
-            # Basic sentiment
-            sentiment = self.sentiment_pipeline(text)[0]
+            # Basic sentiment (if available)
+            if self.sentiment_pipeline:
+                sentiment = self.sentiment_pipeline(text)[0]
+            else:
+                sentiment = {"label": "NEUTRAL", "score": 0.5}
             
-            # Emotion analysis
-            emotion = self.emotion_pipeline(text)[0]
+            # Emotion analysis (if available)
+            if self.emotion_pipeline:
+                emotion = self.emotion_pipeline(text)[0]
+            else:
+                emotion = {"label": "neutral", "score": 0.5}
             
             # Mental health specific sentiment indicators
             mental_health_sentiment = self._analyze_mental_health_sentiment(text)
