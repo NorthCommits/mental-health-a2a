@@ -229,11 +229,33 @@ class MentalHealthApp:
                     storage_manager=self.storage_manager
                 )
                 
+                # Initialize agents asynchronously
+                import asyncio
+                asyncio.run(self.primary_screening.initialize())
+                asyncio.run(self.crisis_detection.initialize())
+                asyncio.run(self.therapeutic_intervention.initialize())
+                asyncio.run(self.care_coordination.initialize())
+                asyncio.run(self.progress_analytics.initialize())
+                
+                # Store agents in session state
+                st.session_state.primary_screening = self.primary_screening
+                st.session_state.crisis_detection = self.crisis_detection
+                st.session_state.therapeutic_intervention = self.therapeutic_intervention
+                st.session_state.care_coordination = self.care_coordination
+                st.session_state.progress_analytics = self.progress_analytics
+                
                 st.session_state.agents_initialized = True
                 st.success("🧠 Mental Health A2A Agents initialized successfully!")
                 
             except Exception as e:
                 st.error(f"Failed to initialize agents: {str(e)}")
+        else:
+            # Load agents from session state
+            self.primary_screening = st.session_state.get('primary_screening')
+            self.crisis_detection = st.session_state.get('crisis_detection')
+            self.therapeutic_intervention = st.session_state.get('therapeutic_intervention')
+            self.care_coordination = st.session_state.get('care_coordination')
+            self.progress_analytics = st.session_state.get('progress_analytics')
     
     def render_header(self):
         """Render the main header"""
@@ -601,11 +623,11 @@ class MentalHealthApp:
         st.subheader("🤖 Agent Status")
         
         agents = [
-            ("Primary Screening", self.primary_screening, "🩺"),
-            ("Crisis Detection", self.crisis_detection, "🚨"),
-            ("Therapeutic Intervention", self.therapeutic_intervention, "💬"),
-            ("Care Coordination", self.care_coordination, "📋"),
-            ("Progress Analytics", self.progress_analytics, "📊")
+            ("Primary Screening", st.session_state.get('primary_screening'), "🩺"),
+            ("Crisis Detection", st.session_state.get('crisis_detection'), "🚨"),
+            ("Therapeutic Intervention", st.session_state.get('therapeutic_intervention'), "💬"),
+            ("Care Coordination", st.session_state.get('care_coordination'), "📋"),
+            ("Progress Analytics", st.session_state.get('progress_analytics'), "📊")
         ]
         
         for name, agent, icon in agents:
@@ -693,8 +715,23 @@ class MentalHealthApp:
             self.storage_manager.save_assessment(assessment_data)
             
             # Process with Primary Screening Agent
-            if self.primary_screening is not None:
-                result = self.primary_screening.process_assessment(assessment_data)
+            if hasattr(self, 'primary_screening') and self.primary_screening is not None:
+                import asyncio
+                session_id = asyncio.run(self.primary_screening.start_screening_session(
+                    user_id=st.session_state.user_id,
+                    input_data=assessment_data
+                ))
+                
+                # Wait a moment for processing and get results
+                import time
+                time.sleep(2)  # Give time for processing
+                
+                results = asyncio.run(self.primary_screening.get_assessment_results(session_id))
+                result = {
+                    'session_id': session_id,
+                    'results': results,
+                    'status': 'completed'
+                }
             else:
                 st.error("Primary Screening Agent not available. Please initialize agents first.")
                 return None
@@ -709,20 +746,42 @@ class MentalHealthApp:
         """Display assessment results"""
         st.success("✅ Assessment completed successfully!")
         
+        # Handle different result structures
+        if isinstance(results, dict):
+            if 'results' in results:
+                # Results from process_initial_assessment
+                assessment_results = results.get('results', [])
+                session_id = results.get('session_id', 'Unknown')
+                st.info(f"Session ID: {session_id}")
+            else:
+                # Direct results
+                assessment_results = [results]
+        elif isinstance(results, list):
+            assessment_results = results
+        else:
+            st.error("Invalid results format")
+            return
+        
         # Display results
-        for result in results:
-            st.markdown(f"""
-            <div class="therapy-card">
-                <h4>{result['assessment_type']} Results</h4>
-                <p><strong>Score:</strong> {result['score']}</p>
-                <p><strong>Severity:</strong> {result['severity']}</p>
-                <p><strong>Risk Level:</strong> {result['risk_level']}</p>
-                <p><strong>Recommendations:</strong></p>
-                <ul>
-                    {''.join([f'<li>{rec}</li>' for rec in result['recommendations']])}
-                </ul>
-            </div>
-            """, unsafe_allow_html=True)
+        if assessment_results:
+            for result in assessment_results:
+                if isinstance(result, dict):
+                    st.markdown(f"""
+                    <div class="therapy-card">
+                        <h4>{result.get('assessment_type', 'Assessment')} Results</h4>
+                        <p><strong>Score:</strong> {result.get('score', 'N/A')}</p>
+                        <p><strong>Severity:</strong> {result.get('severity', 'N/A')}</p>
+                        <p><strong>Risk Level:</strong> {result.get('risk_level', 'N/A')}</p>
+                        <p><strong>Recommendations:</strong></p>
+                        <ul>
+                            {''.join([f'<li>{rec}</li>' for rec in result.get('recommendations', [])])}
+                        </ul>
+                    </div>
+                    """, unsafe_allow_html=True)
+                else:
+                    st.info(f"Result: {result}")
+        else:
+            st.info("No assessment results available")
     
     def process_chat_message(self, message):
         """Process a chat message"""
@@ -734,7 +793,50 @@ class MentalHealthApp:
         })
         
         # Process with Therapeutic Intervention Agent
-        response = self.therapeutic_intervention.process_message(message, st.session_state.user_id)
+        if hasattr(self, 'therapeutic_intervention') and self.therapeutic_intervention is not None:
+            import asyncio
+            
+            # Check if we have an active therapy session
+            if 'therapy_session_id' not in st.session_state:
+                # Start a new therapy session
+                try:
+                    from agents.therapeutic_intervention_agent import TherapySessionType, InterventionType
+                    session_id = asyncio.run(self.therapeutic_intervention.start_therapy_session(
+                        user_id=st.session_state.user_id,
+                        session_type=TherapySessionType.INDIVIDUAL,
+                        intervention_type=InterventionType.CBT,
+                        context={'conversation_history': st.session_state.conversation_history}
+                    ))
+                    st.session_state.therapy_session_id = session_id
+                except Exception as e:
+                    st.error(f"Failed to start therapy session: {str(e)}")
+                    response = "I'm here to help. Could you tell me more about what's on your mind?"
+                    st.session_state.conversation_history.append({
+                        'role': 'assistant',
+                        'content': response,
+                        'timestamp': datetime.now().isoformat()
+                    })
+                    return
+            
+            # Conduct the intervention
+            try:
+                intervention_result = asyncio.run(self.therapeutic_intervention.conduct_intervention(
+                    session_id=st.session_state.therapy_session_id,
+                    user_input=message,
+                    context={'conversation_history': st.session_state.conversation_history}
+                ))
+                
+                # Extract response from intervention result
+                if isinstance(intervention_result, dict):
+                    response = intervention_result.get('response', 'I understand. How does that make you feel?')
+                else:
+                    response = str(intervention_result)
+                    
+            except Exception as e:
+                # Fallback to a more therapeutic response
+                response = self._generate_therapeutic_response(message)
+        else:
+            response = "Therapeutic Intervention Agent not available. Please initialize agents first."
         
         # Add agent response to history
         st.session_state.conversation_history.append({
@@ -748,6 +850,29 @@ class MentalHealthApp:
         
         st.rerun()
     
+    def _generate_therapeutic_response(self, message: str) -> str:
+        """Generate a basic therapeutic response as fallback"""
+        # Simple keyword-based responses for demonstration
+        message_lower = message.lower()
+        
+        if any(word in message_lower for word in ['tired', 'exhausted', 'fatigue']):
+            return "I hear that you're feeling tired. It sounds like you might be experiencing some stress or overwhelm. Can you tell me more about what's contributing to this feeling?"
+        
+        elif any(word in message_lower for word in ['work', 'job', 'career', 'professional']):
+            return "Work can be a significant source of stress. It sounds like you're dealing with some challenges there. What aspects of your work are most difficult right now?"
+        
+        elif any(word in message_lower for word in ['sad', 'depressed', 'down', 'blue']):
+            return "I understand you're feeling down. These feelings can be really difficult to navigate. What's been weighing on your mind lately?"
+        
+        elif any(word in message_lower for word in ['anxious', 'worried', 'nervous', 'anxiety']):
+            return "Anxiety can feel overwhelming. It sounds like you might be experiencing some worry or nervousness. What's making you feel most anxious right now?"
+        
+        elif any(word in message_lower for word in ['ok', 'okay', 'fine', 'good']):
+            return "I appreciate you sharing that with me. Sometimes 'okay' can mean different things. How are you really feeling today?"
+        
+        else:
+            return "Thank you for sharing that with me. I'm here to listen and help. Can you tell me more about what's on your mind or how you're feeling?"
+    
     def run_quick_assessment(self, assessment_type):
         """Run a quick assessment"""
         st.info(f"Running {assessment_type} assessment...")
@@ -757,20 +882,121 @@ class MentalHealthApp:
     def start_mindfulness_exercise(self):
         """Start a mindfulness exercise"""
         st.info("🧘 Starting mindfulness exercise...")
-        # Implementation would go here
-        pass
+        
+        # Add mindfulness exercise to conversation
+        exercise_text = """
+        **Mindfulness Breathing Exercise**
+        
+        Let's take a moment to focus on your breathing:
+        
+        1. **Find a comfortable position** - sit or stand in a way that feels natural
+        2. **Close your eyes gently** or focus on a spot in front of you
+        3. **Breathe in slowly** through your nose for 4 counts
+        4. **Hold your breath** for 4 counts
+        5. **Breathe out slowly** through your mouth for 6 counts
+        6. **Repeat this cycle** 3-5 times
+        
+        Notice how your body feels with each breath. If your mind wanders, gently bring your attention back to your breathing.
+        
+        How does this feel for you?
+        """
+        
+        st.session_state.conversation_history.append({
+            'role': 'assistant',
+            'content': exercise_text,
+            'timestamp': datetime.now().isoformat()
+        })
+        
+        # Save to conversation
+        self.storage_manager.save_conversation(
+            st.session_state.user_id,
+            "Mindfulness exercise requested",
+            exercise_text
+        )
+        
+        st.rerun()
     
     def open_thought_journal(self):
         """Open thought journal"""
         st.info("📝 Opening thought journal...")
-        # Implementation would go here
-        pass
+        
+        # Add thought journal prompt to conversation
+        journal_text = """
+        **Thought Journal Exercise**
+        
+        Let's explore your thoughts and feelings through writing:
+        
+        **Prompt 1: What's on your mind right now?**
+        Take a moment to write down whatever thoughts are present. Don't judge them, just observe and record.
+        
+        **Prompt 2: What emotions are you experiencing?**
+        Notice what feelings are present in your body and mind. Name them if you can.
+        
+        **Prompt 3: What triggered these thoughts/feelings?**
+        Consider what situation, event, or memory might have brought these up.
+        
+        **Prompt 4: How can you be kind to yourself right now?**
+        What would you say to a good friend in this situation?
+        
+        Feel free to share any insights or thoughts that come up during this exercise.
+        """
+        
+        st.session_state.conversation_history.append({
+            'role': 'assistant',
+            'content': journal_text,
+            'timestamp': datetime.now().isoformat()
+        })
+        
+        # Save to conversation
+        self.storage_manager.save_conversation(
+            st.session_state.user_id,
+            "Thought journal requested",
+            journal_text
+        )
+        
+        st.rerun()
     
     def open_goal_setting(self):
         """Open goal setting interface"""
         st.info("🎯 Opening goal setting...")
-        # Implementation would go here
-        pass
+        
+        # Add goal setting exercise to conversation
+        goal_text = """
+        **SMART Goal Setting Exercise**
+        
+        Let's work together to set some meaningful goals for your mental health and wellbeing:
+        
+        **S - Specific**: What exactly do you want to achieve?
+        **M - Measurable**: How will you know when you've achieved it?
+        **A - Achievable**: Is this goal realistic for you right now?
+        **R - Relevant**: Why is this goal important to you?
+        **T - Time-bound**: When would you like to achieve this?
+        
+        **Some areas to consider:**
+        - Daily self-care routines
+        - Stress management techniques
+        - Social connections
+        - Physical health
+        - Work-life balance
+        - Personal growth
+        
+        What's one small goal you'd like to work on this week?
+        """
+        
+        st.session_state.conversation_history.append({
+            'role': 'assistant',
+            'content': goal_text,
+            'timestamp': datetime.now().isoformat()
+        })
+        
+        # Save to conversation
+        self.storage_manager.save_conversation(
+            st.session_state.user_id,
+            "Goal setting requested",
+            goal_text
+        )
+        
+        st.rerun()
     
     def open_mood_checkin(self):
         """Open mood check-in"""

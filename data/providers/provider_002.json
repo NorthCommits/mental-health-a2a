@@ -1,0 +1,51 @@
+{
+  "provider_id": "provider_002",
+  "name": "Dr. Michael Chen",
+  "provider_type": "psychologist",
+  "specializations": [
+    "cbt",
+    "trauma",
+    "ptsd"
+  ],
+  "contact_email": "michael.chen@mentalhealth.com",
+  "contact_phone": "555-0102",
+  "availability": {
+    "monday": [
+      "08:00",
+      "09:00",
+      "10:00",
+      "13:00",
+      "14:00"
+    ],
+    "tuesday": [
+      "08:00",
+      "09:00",
+      "10:00",
+      "13:00",
+      "14:00"
+    ],
+    "wednesday": [
+      "08:00",
+      "09:00",
+      "10:00",
+      "13:00",
+      "14:00"
+    ],
+    "thursday": [
+      "08:00",
+      "09:00",
+      "10:00",
+      "13:00",
+      "14:00"
+    ],
+    "friday": [
+      "08:00",
+      "09:00",
+      "10:00"
+    ]
+  },
+  "location": "Main Office - Room 102",
+  "is_active": true,
+  "created_at": "2025-09-06 09:10:09.303620",
+  "metadata": {}
+}

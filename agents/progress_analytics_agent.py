@@ -129,11 +129,19 @@ class ProgressAnalyticsAgent:
         self.trends: Dict[str, List[ProgressTrend]] = {}  # user_id -> trends
         self.reports: Dict[str, List[ProgressReport]] = {}  # user_id -> reports
         
-        # Register message handlers
-        asyncio.create_task(self._register_message_handlers())
+        # Flags for async initialization
+        self._message_handlers_registered = False
+        self._capabilities_registered = False
+    
+    async def initialize(self):
+        """Initialize the agent asynchronously"""
+        if not self._message_handlers_registered:
+            await self._register_message_handlers()
+            self._message_handlers_registered = True
         
-        # Register agent capabilities
-        asyncio.create_task(self._register_agent_capabilities())
+        if not self._capabilities_registered:
+            await self._register_agent_capabilities()
+            self._capabilities_registered = True
     
     async def _register_message_handlers(self):
         """Register message handlers for A2A communication"""
@@ -162,13 +170,13 @@ class ProgressAnalyticsAgent:
                     "capability_type": CapabilityType.PROGRESS_ANALYTICS,
                     "description": "Progress tracking and analytics reporting",
                     "input_modalities": [
-                        InputModality.JSON,
-                        InputModality.TEXT
+                        InputModality.TEXT,
+                        InputModality.DOCUMENT
                     ],
                     "output_formats": [
                         OutputFormat.STRUCTURED_DATA,
-                        OutputFormat.PROGRESS_REPORT,
-                        OutputFormat.DATA_ANALYSIS
+                        OutputFormat.TEXT_RESPONSE,
+                        OutputFormat.ASSESSMENT_SCORE
                     ],
                     "parameters": {
                         "supported_metrics": [

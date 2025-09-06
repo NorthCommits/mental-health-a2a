@@ -18,7 +18,7 @@ from shared.a2a_protocol.security import A2ASecurity, AgentRole, AccessLevel
 
 from .assessment_models import (
     PHQ9Assessment, GAD7Assessment, AssessmentResult, 
-    AssessmentType, SeverityLevel, RiskLevel
+    AssessmentType, SeverityLevel, RiskLevel, AssessmentResponse
 )
 from .input_processors import TextProcessor, AudioProcessor, ImageProcessor, DocumentProcessor
 
@@ -432,11 +432,11 @@ class PrimaryScreeningAgent:
             else:
                 score = 0
             
-            responses.append({
-                "question_id": question.question_id,
-                "response": score,
-                "timestamp": datetime.utcnow()
-            })
+            responses.append(AssessmentResponse(
+                question_id=question.question_id,
+                response=score,
+                timestamp=datetime.utcnow()
+            ))
         
         return responses
     
@@ -457,11 +457,11 @@ class PrimaryScreeningAgent:
             else:
                 score = 0
             
-            responses.append({
-                "question_id": question.question_id,
-                "response": score,
-                "timestamp": datetime.utcnow()
-            })
+            responses.append(AssessmentResponse(
+                question_id=question.question_id,
+                response=score,
+                timestamp=datetime.utcnow()
+            ))
         
         return responses
     
@@ -527,7 +527,10 @@ class PrimaryScreeningAgent:
             session = self.active_sessions[session_id]
             
             # Analyze overall risk level
-            max_risk = max([r.risk_level for r in results], key=lambda x: ["low", "medium", "high", "critical"].index(x.value))
+            if results:
+                max_risk = max([r.risk_level for r in results], key=lambda x: ["low", "medium", "high", "critical"].index(x.value))
+            else:
+                max_risk = RiskLevel.LOW  # Default to low risk if no results
             
             if max_risk in [RiskLevel.HIGH, RiskLevel.CRITICAL]:
                 # High risk - refer to human clinician

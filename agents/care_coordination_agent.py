@@ -136,14 +136,24 @@ class CareCoordinationAgent:
         self.care_plans: Dict[str, CarePlan] = {}
         self.user_appointments: Dict[str, List[str]] = {}  # user_id -> appointment_ids
         
-        # Register message handlers
-        asyncio.create_task(self._register_message_handlers())
+        # Flags for async initialization
+        self._message_handlers_registered = False
+        self._capabilities_registered = False
+        self._sample_providers_initialized = False
+    
+    async def initialize(self):
+        """Initialize the agent asynchronously"""
+        if not self._message_handlers_registered:
+            await self._register_message_handlers()
+            self._message_handlers_registered = True
         
-        # Register agent capabilities
-        asyncio.create_task(self._register_agent_capabilities())
+        if not self._capabilities_registered:
+            await self._register_agent_capabilities()
+            self._capabilities_registered = True
         
-        # Initialize with sample providers
-        asyncio.create_task(self._initialize_sample_providers())
+        if not self._sample_providers_initialized:
+            await self._initialize_sample_providers()
+            self._sample_providers_initialized = True
     
     async def _register_message_handlers(self):
         """Register message handlers for A2A communication"""
@@ -173,7 +183,7 @@ class CareCoordinationAgent:
                     "description": "Appointment scheduling and provider coordination",
                     "input_modalities": [
                         InputModality.TEXT,
-                        InputModality.JSON
+                        InputModality.DOCUMENT
                     ],
                     "output_formats": [
                         OutputFormat.APPOINTMENT_SCHEDULE,
